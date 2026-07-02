@@ -1,0 +1,34 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://fonts.googleapis.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com wss://*.firebaseio.com; frame-src https://www.google.com https://recaptcha.google.com https://www.recaptcha.net"
+
+# Allow social media crawlers (WhatsApp, Telegram, Facebook, Twitter) to fetch OG images
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400"
+
+# ── SPA fallback ──
+# Standalone entry pages are served as real files (checked first because
+# force = false lets existing files win). Everything else falls back to the
+# SPA shell so refreshes / direct hits on the app still boot index.html.
+# (Hash routes like #/account never reach the server, but this covers
+#  refreshes on the root and any unknown path.)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

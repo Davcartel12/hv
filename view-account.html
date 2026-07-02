@@ -1,0 +1,821 @@
+<!-- TOP BAR -->
+    
+
+    <!-- LIVE TICKER -->
+    
+
+    <!-- MINE DASHBOARD HEADER -->
+    <div class="mine-header">
+        <div class="user-meta">
+            <div class="user-info-block">
+                <span class="user-phone" id="userPhone">**********</span>
+                <span class="user-label">Investor Account</span>
+            </div>
+            <div class="vip-badge-tag" id="userTier">Investor</div>
+        </div>
+        <div class="balance-block">
+            <span class="user-label" style="color:var(--red2)">Available Balance</span>
+            <div class="balance-val" id="amount"><small>$</small>0.00</div>
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="action-row">
+        <div class="act-btn" id="btnRecharge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <polyline points="19 12 12 19 5 12" />
+            </svg>
+            Recharge
+        </div>
+        <div class="act-btn" id="btnWithdraw">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+            </svg>
+            Withdrawal
+        </div>
+    </div>
+
+    <!-- MENU GROUP 1: FINANCIALS & ACCESS -->
+    <div class="list-section">
+        <div class="menu-group">
+            <div class="menu-row" id="rowInvite">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+                <div class="row-text">Task Rewards / Invite</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="menu-row" id="rowGift">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 12v10H4V12" />
+                        <path d="M2 7h20v5H2z" />
+                        <path d="M12 22V7" />
+                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                    </svg>
+                </div>
+                <div class="row-text">Gift Code</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- ── WALLET BINDING ROW (NEW) ── -->
+            <div class="menu-row" id="rowWallet">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                </div>
+                <div class="row-text">Withdrawal Wallet</div>
+                <div class="row-value" id="rowWalletValue">Not bound</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="menu-row" id="rowDetails">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div class="row-text">Account Details</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="menu-row" id="rowRechargeRec">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+                <div class="row-text">Recharge Records</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="menu-row" id="rowWithdrawalRec">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                </div>
+                <div class="row-text">Withdrawal Records</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- MENU GROUP 2: SYSTEM & INFORMATION -->
+    <div class="list-section" style="margin-bottom: 24px;">
+        <div class="menu-group">
+
+
+            <div class="menu-row" onclick="window.location.href='#/chat'">
+                <div class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </div>
+                <div class="row-text">Customer Service</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+
+
+            <div class="menu-row" id="rowLogout" style="color:var(--red2)">
+                <div class="row-icon" style="background:rgba(232,0,29,0.15)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </div>
+                <div class="row-text">Exit the App</div>
+                <div class="row-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- ── WALLET BINDING MODAL (NEW) ── -->
+    <div class="modal-overlay" id="modalWallet">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Withdrawal Wallet</span>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="current-binding" id="currentBindingBox" style="display:none;">
+                    <div class="cb-label">Currently Bound</div>
+                    <div class="cb-value" id="currentBindingValue">—</div>
+                </div>
+
+                <div class="modal-field">
+                    <label>Network / Coin</label>
+                    <select class="modal-select" id="walletCoinSelect">
+                        <option value="OPAY">OPay</option>
+                        <option value="MONIEPOINT">Moniepoint</option>
+                        <option value="PALMPAY">PalmPay</option>
+                        <option value="USDT">Tether (USDT TRC20)</option>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH ERC20)</option>
+                        <option value="TRX">TRON (TRX)</option>
+                        <option value="BNB">BNB (BEP20)</option>
+                        <option value="SOL">Solana (SOL)</option>
+                        <option value="LTC">Litecoin (LTC)</option>
+                        <option value="DOGE">Dogecoin (DOGE)</option>
+                    </select>
+                </div>
+
+                <div class="current-binding" id="lockedBanner"
+                    style="display:none;border-color:rgba(200,169,110,0.35);background:rgba(200,169,110,0.06);">
+                    <div class="cb-label" style="color:var(--gold);">🔒 Address Locked</div>
+                    <div class="cb-value" style="color:var(--muted);font-family:inherit;">
+                        Your withdrawal address is permanently bound and cannot be changed. Contact support if you need
+                        help.
+                    </div>
+                </div>
+
+                <div class="modal-field" id="walletAccountNameField" style="display:none;">
+                    <label>Account Name</label>
+                    <input type="text" class="modal-input" id="walletAccountNameInput"
+                        placeholder="Name on the account…">
+                </div>
+
+                <div class="modal-field">
+                    <label id="walletAddressLabel">Wallet Address</label>
+                    <input type="text" class="modal-input" id="walletAddressInput"
+                        placeholder="Paste your wallet address…">
+                </div>
+                <div class="modal-hint" id="walletModalHint">
+                    Double-check your address and network. Withdrawals are sent to this address and cannot be reversed
+                    once processed. One account, one address — this binding is permanent.
+                </div>
+
+                <button class="modal-btn" id="btnSaveWallet">Save Wallet Address</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gift Code Modal -->
+    <div class="modal-overlay" id="modalGift">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Redeem Gift Code</span>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>Gift / Activation Code</label>
+                    <input type="text" class="modal-input" id="giftCodeInput" placeholder="Enter code here…">
+                </div>
+                <button class="modal-btn" id="btnRedeemGift">Redeem Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Details Modal -->
+    <div class="modal-overlay" id="modalDetails">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Account Details</span>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="color: var(--muted); font-size: 14px; line-height: 2;">
+                <div>Full Name: <strong style="color:var(--text)" id="detName">—</strong></div>
+                <div>Email: <strong style="color:var(--text)" id="detEmail">—</strong></div>
+                <div>Bound Address: <strong style="color:var(--text)" id="detAddress">—</strong></div>
+                <div>Registered Date: <strong style="color:var(--text)" id="detDate">—</strong></div>
+                <div>Total Invested: <strong style="color:var(--text)" id="detInvested">—</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recharge Records Modal -->
+    <div class="modal-overlay" id="modalRechargeRec">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Recharge Records</span>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="record-list" id="rechargeList">
+                    <div class="empty-records">Loading records…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Records Modal -->
+    <div class="modal-overlay" id="modalWithdrawalRec">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <span class="modal-title">Withdrawal Records</span>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="record-list" id="withdrawalList">
+                    <div class="empty-records">Loading records…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Message</div>
+
+    <!-- Ticker Script -->
+    
+
+    <!-- General UI Controllers & Modal Logic -->
+    
+
+    <!-- Firebase Logic -->
+<script>
+window.__pageInit['account'] = function() {
+const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+const db = window.__fb.db; const auth = window.__fb.auth;
+
+        const fmt2 = n => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtDate = d => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        const shortAddr = a => a && a.length > 16 ? a.slice(0, 8) + '…' + a.slice(-4) : (a || '');
+
+        // ── Fiat providers that use a phone/account number + account name ──
+        const FIAT_PROVIDERS = ['OPAY', 'PALMPAY', 'MONIEPOINT'];
+        const isFiat = coin => FIAT_PROVIDERS.includes((coin || '').toUpperCase());
+
+        // Normalize a Nigerian phone/account number so all formats collapse to one:
+        // 8063804264, 08063804264, 2348063804264, +2348063804264 → 2348063804264
+        function normalizePhone(raw) {
+            let n = (raw || '').replace(/[\s\-()+]/g, ''); // strip spaces, dashes, parens, plus
+            n = n.replace(/\D/g, '');                       // digits only
+            if (n.startsWith('234')) return n;              // already country-coded
+            if (n.startsWith('0')) return '234' + n.slice(1); // 0806… → 234806…
+            if (n.length === 10 && /^[789]/.test(n)) return '234' + n; // 806… → 234806…
+            return n; // fallback: whatever digits remain
+        }
+
+        // Build the unique binding key: provider + normalized number (fiat)
+        function bindingKey(coin, address) {
+            const c = (coin || '').toUpperCase();
+            if (isFiat(c)) return c.toLowerCase() + '_' + normalizePhone(address);
+            return 'crypto_' + (address || '').trim(); // crypto key (not uniqueness-enforced here)
+        }
+
+        async function __auth_main(){ const user = window.currentUser;
+            if (!user) { window.location.href = 'signin.html'; return; }
+
+            // Exit / Logout trigger
+            document.getElementById('rowLogout').addEventListener('click', () => {
+                window.__fb.signOut(window.__fb.auth).then(() => {
+                    window.location.href = 'signin.html';
+                });
+            });
+
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const snap = await getDoc(userDocRef);
+
+                if (snap.exists()) {
+                    const d = snap.data();
+                    const balance = d.balance || 0;
+                    const invested = d.invested || 0;
+
+                    // Display user identifier: phone or display name or fallback
+                    const userPhoneStr = d.phone || d.fullName || user.email || 'Investor';
+                    document.getElementById('userPhone').textContent = userPhoneStr;
+                    document.getElementById('amount').innerHTML = `<small>$</small>${fmt2(balance)}`;
+
+                    // Tier display
+                    const tier = balance >= 10000 ? 'Gold Tier' : balance >= 1000 ? 'Silver Tier' : 'Investor';
+                    document.getElementById('userTier').textContent = tier;
+
+                    // Populate Details Modal
+                    document.getElementById('detName').textContent = d.fullName || '—';
+                    document.getElementById('detEmail').textContent = user.email || '—';
+                    document.getElementById('detAddress').textContent = d.walletAddress || 'None Bound';
+                    document.getElementById('detInvested').textContent = '$' + fmt2(invested);
+                    document.getElementById('detDate').textContent = d.createdAt ? fmtDate(d.createdAt.toDate?.() || d.createdAt) : 'Recently';
+
+                    // ── Populate wallet binding row + modal ──
+                    const walletInput = document.getElementById('walletAddressInput');
+                    const coinSelect = document.getElementById('walletCoinSelect');
+                    const rowWalletValue = document.getElementById('rowWalletValue');
+                    const currentBindingBox = document.getElementById('currentBindingBox');
+                    const currentBindingValue = document.getElementById('currentBindingValue');
+                    const acctNameField = document.getElementById('walletAccountNameField');
+                    const acctNameInput = document.getElementById('walletAccountNameInput');
+                    const addrLabel = document.getElementById('walletAddressLabel');
+                    const lockedBanner = document.getElementById('lockedBanner');
+                    const btnSaveWalletEl = document.getElementById('btnSaveWallet');
+
+                    // Is the account already permanently bound?
+                    const isBound = !!d.walletAddress;
+
+                    // Toggle fiat vs crypto fields based on selected provider
+                    function applyFieldMode() {
+                        const coin = coinSelect ? coinSelect.value : '';
+                        if (isFiat(coin)) {
+                            addrLabel.textContent = 'Account Number';
+                            if (walletInput) walletInput.placeholder = 'e.g. 08063804264';
+                            acctNameField.style.display = 'block';
+                        } else {
+                            addrLabel.textContent = 'Wallet Address';
+                            if (walletInput) walletInput.placeholder = 'Paste your wallet address…';
+                            acctNameField.style.display = 'none';
+                        }
+                    }
+
+                    // Lock the modal once an address is bound (permanent)
+                    function applyLockState() {
+                        if (isBound) {
+                            lockedBanner.style.display = 'block';
+                            if (walletInput) walletInput.disabled = true;
+                            if (coinSelect) coinSelect.disabled = true;
+                            if (acctNameInput) acctNameInput.disabled = true;
+                            if (btnSaveWalletEl) { btnSaveWalletEl.style.display = 'none'; }
+                        } else {
+                            lockedBanner.style.display = 'none';
+                        }
+                    }
+
+                    function refreshWalletUI(addr, coin, acctName) {
+                        if (addr) {
+                            rowWalletValue.textContent = shortAddr(addr);
+                            currentBindingBox.style.display = 'block';
+                            let line = (coin ? coin + ' · ' : '') + addr;
+                            if (acctName) line += '  (' + acctName + ')';
+                            currentBindingValue.textContent = line;
+                        } else {
+                            rowWalletValue.textContent = 'Not bound';
+                            currentBindingBox.style.display = 'none';
+                        }
+                    }
+
+                    if (d.walletAddress && walletInput) walletInput.value = d.walletAddress;
+                    if (d.walletCoin && coinSelect) coinSelect.value = d.walletCoin;
+                    if (d.walletAccountName && acctNameInput) acctNameInput.value = d.walletAccountName;
+                    if (coinSelect) coinSelect.addEventListener('change', applyFieldMode);
+                    applyFieldMode();
+                    applyLockState();
+                    refreshWalletUI(d.walletAddress, d.walletCoin, d.walletAccountName);
+
+                    // Save Wallet Action — one account, one address (permanent)
+                    if (btnSaveWalletEl) {
+                        btnSaveWalletEl.addEventListener('click', async () => {
+                            // Hard stop if already bound
+                            if (isBound) {
+                                showToast('Your address is already bound and cannot be changed.', 'error');
+                                return;
+                            }
+
+                            const newCoin = coinSelect ? coinSelect.value : '';
+                            const rawAddr = walletInput ? walletInput.value.trim() : '';
+                            const acctName = acctNameInput ? acctNameInput.value.trim() : '';
+                            const fiat = isFiat(newCoin);
+
+                            if (!rawAddr) {
+                                showToast(fiat ? 'Please enter your account number.' : 'Please enter an address.', 'error');
+                                return;
+                            }
+                            if (fiat && !acctName) {
+                                showToast('Please enter the account name.', 'error');
+                                return;
+                            }
+
+                            // Store the normalized number for fiat so formats don't matter
+                            const storedAddr = fiat ? normalizePhone(rawAddr) : rawAddr;
+
+                            btnSaveWalletEl.textContent = 'Saving…';
+                            btnSaveWalletEl.disabled = true;
+
+                            try {
+                                // ── Uniqueness check (fiat only) via wallet_bindings collection ──
+                                // Doc ID = provider + normalized number. Create-only rules mean a
+                                // second account with the same number will fail → "one account, one address".
+                                if (fiat) {
+                                    const key = bindingKey(newCoin, rawAddr);
+                                    const bindRef = doc(db, 'wallet_bindings', key);
+                                    const bindSnap = await getDoc(bindRef);
+                                    if (bindSnap.exists() && bindSnap.data().uid !== user.uid) {
+                                        showToast('⚠️ One account, one address. This number is already linked to another account.', 'error');
+                                        btnSaveWalletEl.textContent = 'Save Wallet Address';
+                                        btnSaveWalletEl.disabled = false;
+                                        return;
+                                    }
+                                    // Claim the binding (create-only; rejected if taken)
+                                    await setDoc(bindRef, {
+                                        uid: user.uid,
+                                        provider: newCoin.toUpperCase(),
+                                        number: storedAddr,
+                                        accountName: acctName,
+                                        createdAt: new Date().toISOString()
+                                    });
+                                }
+
+                                // Save to the user doc (this is what locks it going forward)
+                                const payload = { walletAddress: storedAddr, walletCoin: newCoin };
+                                if (fiat) payload.walletAccountName = acctName;
+                                await updateDoc(userDocRef, payload);
+
+                                document.getElementById('detAddress').textContent = storedAddr;
+                                refreshWalletUI(storedAddr, newCoin, fiat ? acctName : '');
+
+                                // Lock the UI immediately — no second bind
+                                if (walletInput) walletInput.disabled = true;
+                                if (coinSelect) coinSelect.disabled = true;
+                                if (acctNameInput) acctNameInput.disabled = true;
+                                lockedBanner.style.display = 'block';
+                                btnSaveWalletEl.style.display = 'none';
+
+                                closeModal(document.getElementById('modalWallet'));
+                                showToast('Withdrawal address bound successfully!', 'success');
+                            } catch (err) {
+                                console.error(err);
+                                // A permission-denied here usually means the binding is already taken
+                                if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+                                    showToast('⚠️ One account, one address. This number is already linked to another account.', 'error');
+                                } else {
+                                    showToast('Failed to save. Please try again.', 'error');
+                                }
+                                btnSaveWalletEl.textContent = 'Save Wallet Address';
+                                btnSaveWalletEl.disabled = false;
+                            }
+                        });
+                    }
+
+                    // Fetch Recharge records
+                    window.koLoadRechargeHistory = async () => {
+                        try {
+                            const depQuery = query(collection(db, 'deposits'), where('uid', '==', user.uid));
+                            const depSnaps = await getDocs(depQuery);
+                            const rList = document.getElementById('rechargeList');
+
+                            if (depSnaps.empty) {
+                                rList.innerHTML = '<div class="empty-records">No deposit records found.</div>';
+                            } else {
+                                const records = [];
+                                depSnaps.forEach(snap => {
+                                    const data = snap.data();
+                                    records.push(data);
+                                });
+                                // Sort descending by createdAt
+                                records.sort((a, b) => {
+                                    const tA = a.createdAt?.toDate?.() ? a.createdAt.toDate().getTime() : (a.createdAt || 0);
+                                    const tB = b.createdAt?.toDate?.() ? b.createdAt.toDate().getTime() : (b.createdAt || 0);
+                                    return tB - tA;
+                                });
+
+                                let depHtml = '';
+                                records.forEach(rec => {
+                                    const amountVal = rec.amount || 0;
+                                    const coinSymbol = rec.coin || 'usdt';
+                                    const timeStr = rec.createdAt ? fmtDate(rec.createdAt.toDate?.() || rec.createdAt) : 'Just now';
+                                    const statusVal = rec.status || 'pending';
+
+                                    depHtml += `
+                                    <div class="record-item">
+                                        <div class="record-details">
+                                            <span class="record-amount">$${fmt2(amountVal)}</span>
+                                            <span class="record-coin">${coinSymbol}</span>
+                                            <span class="record-time">${timeStr}</span>
+                                        </div>
+                                        <span class="record-status ${statusVal}">${statusVal}</span>
+                                    </div>`;
+                                });
+                                rList.innerHTML = depHtml;
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            document.getElementById('rechargeList').innerHTML = '<div class="empty-records">Failed to load recharge history.</div>';
+                        }
+                    };
+
+                    // Fetch Withdrawal records
+                    window.koLoadWithdrawalHistory = async () => {
+                        try {
+                            const withQuery = query(collection(db, 'withdrawals'), where('uid', '==', user.uid));
+                            const withSnaps = await getDocs(withQuery);
+                            const wList = document.getElementById('withdrawalList');
+
+                            if (withSnaps.empty) {
+                                wList.innerHTML = '<div class="empty-records">No withdrawal records found.</div>';
+                            } else {
+                                const records = [];
+                                withSnaps.forEach(snap => {
+                                    const data = snap.data();
+                                    records.push(data);
+                                });
+                                // Sort descending by createdAt
+                                records.sort((a, b) => {
+                                    const tA = a.createdAt?.toDate?.() ? a.createdAt.toDate().getTime() : (a.createdAt || 0);
+                                    const tB = b.createdAt?.toDate?.() ? b.createdAt.toDate().getTime() : (b.createdAt || 0);
+                                    return tB - tA;
+                                });
+
+                                let withHtml = '';
+                                records.forEach(rec => {
+                                    const amountVal = rec.amount || 0;
+                                    const coinSymbol = rec.coin || 'usdt';
+                                    const timeStr = rec.createdAt ? fmtDate(rec.createdAt.toDate?.() || rec.createdAt) : 'Just now';
+                                    const statusVal = rec.status || 'pending';
+
+                                    withHtml += `
+                                    <div class="record-item">
+                                        <div class="record-details">
+                                            <span class="record-amount">$${fmt2(amountVal)}</span>
+                                            <span class="record-coin">${coinSymbol}</span>
+                                            <span class="record-time">${timeStr}</span>
+                                        </div>
+                                        <span class="record-status ${statusVal}">${statusVal}</span>
+                                    </div>`;
+                                });
+                                wList.innerHTML = withHtml;
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            document.getElementById('withdrawalList').innerHTML = '<div class="empty-records">Failed to load withdrawal history.</div>';
+                        }
+                    };
+
+                    // Initial load
+                    window.koLoadRechargeHistory();
+                    window.koLoadWithdrawalHistory();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    
+try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[account] auth_main', e); }
+
+/* ---- page UI script(s) ---- */
+try {
+
+        (function () {
+            const tickerData = [
+                { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
+                { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
+                { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
+                { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
+                { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
+                { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
+                { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
+                { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
+            ];
+            const inner = document.getElementById('tickerInner');
+            const build = () => tickerData.map(d =>
+                `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
+            ).join('');
+            inner.innerHTML = build() + build();
+        })();
+    
+
+
+        const toast = document.getElementById('toast');
+        function showToast(msg, type = 'success') {
+            toast.textContent = msg;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Open modal helpers
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(modalEl) {
+            modalEl.classList.remove('show');
+        }
+
+        // Setup event handlers for closing modals
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) closeModal(overlay);
+            });
+            const closeBtn = overlay.querySelector('.modal-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => closeModal(overlay));
+            }
+        });
+
+        // Quick Actions routing
+        document.getElementById('btnRecharge').addEventListener('click', () => {
+            window.location.href = '#/deposit?tab=deposit';
+        });
+        document.getElementById('btnWithdraw').addEventListener('click', () => {
+            window.location.href = '#/deposit?tab=withdraw';
+        });
+
+        // Menu items triggering modals or links
+        document.getElementById('rowInvite').addEventListener('click', () => {
+            window.location.href = '#/support';
+        });
+        document.getElementById('rowGift').addEventListener('click', () => {
+            openModal('modalGift');
+        });
+        document.getElementById('rowDetails').addEventListener('click', () => {
+            openModal('modalDetails');
+        });
+        document.getElementById('rowRechargeRec').addEventListener('click', () => {
+            openModal('modalRechargeRec');
+        });
+        document.getElementById('rowWithdrawalRec').addEventListener('click', () => {
+            openModal('modalWithdrawalRec');
+        });
+        // ── Wallet binding row opens the wallet modal ──
+        document.getElementById('rowWallet').addEventListener('click', () => {
+            openModal('modalWallet');
+        });
+
+        // Gift Code Redeem — real Firebase logic
+        document.getElementById('btnRedeemGift').addEventListener('click', async () => {
+            const input = document.getElementById('giftCodeInput');
+            const code = input.value.trim().toUpperCase();
+            if (!code) { showToast('Please enter a code.', 'error'); return; }
+
+            const btn = document.getElementById('btnRedeemGift');
+            btn.textContent = 'Verifying…';
+            btn.disabled = true;
+
+            try {
+                // Import needed extras (db available after module script runs)
+                const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, serverTimestamp, increment, arrayUnion } = window.__fb;
+const _db = window.__fb.db;
+const _auth = window.__fb.auth;
+const user = _auth.currentUser;
+
+                if (!user) { showToast('Please sign in first.', 'error'); btn.textContent = 'Redeem Code'; btn.disabled = false; return; }
+
+                // Look up gift card
+                const cardQ = query(collection(_db, 'giftcards'), where('code', '==', code), where('active', '==', true));
+                const cardSnap = await getDocs(cardQ);
+
+                if (cardSnap.empty) {
+                    showToast('Invalid or expired code.', 'error');
+                    btn.textContent = 'Redeem Code'; btn.disabled = false;
+                    return;
+                }
+
+                const cardDoc = cardSnap.docs[0];
+                const card = cardDoc.data();
+                const claimedBy = card.claimedBy || [];
+
+                // Check already claimed
+                if (claimedBy.includes(user.uid)) {
+                    showToast('You have already redeemed this code.', 'error');
+                    btn.textContent = 'Redeem Code'; btn.disabled = false;
+                    return;
+                }
+
+                // Check max claims
+                if (card.maxClaims > 0 && claimedBy.length >= card.maxClaims) {
+                    showToast('This code has reached its maximum redemptions.', 'error');
+                    btn.textContent = 'Redeem Code'; btn.disabled = false;
+                    return;
+                }
+
+                // Redeem — update user balance and gift card record
+                const newClaimedCount = claimedBy.length + 1;
+                const stillActive = card.maxClaims <= 0 || newClaimedCount < card.maxClaims;
+
+                await Promise.all([
+                    updateDoc(doc(_db, 'users', user.uid), { balance: increment(Number(card.amount || 0)) }),
+                    updateDoc(doc(_db, 'giftcards', cardDoc.id), {
+                        claimedBy: arrayUnion(user.uid),
+                        claimedCount: newClaimedCount,
+                        active: stillActive
+                    }),
+                    addDoc(collection(_db, 'deposits'), {
+                        uid: user.uid,
+                        email: user.email || '',
+                        amount: Number(card.amount || 0),
+                        coin: 'bonus claimed',
+                        status: 'approved',
+                        createdAt: serverTimestamp()
+                    })
+                ]);
+
+                input.value = '';
+                showToast(`🎁 $${Number(card.amount).toFixed(2)} bonus credited to your balance!`, 'success');
+                // Update displayed balance
+                const userSnap = await getDoc(doc(_db, 'users', user.uid));
+                if (userSnap.exists()) {
+                    const bal = userSnap.data().balance || 0;
+                    const fmt2 = n => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('amount').innerHTML = `<small>$</small>${fmt2(bal)}`;
+                }
+                if (window.koLoadRechargeHistory) {
+                    window.koLoadRechargeHistory();
+                }
+                closeModal(document.getElementById('modalGift'));
+            } catch (err) {
+                console.error(err);
+                showToast('An error occurred. Please try again.', 'error');
+            }
+
+            btn.textContent = 'Redeem Code';
+            btn.disabled = false;
+        });
+    
+} catch(e){ console.error('[account] ui', e); }
+};
+</script>

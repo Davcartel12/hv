@@ -1,0 +1,822 @@
+<div class="bg-glow"></div>
+
+    
+
+    <div class="wrapper">
+        <div class="page-title">
+            <div class="label">Finance</div>
+            <h1>Deposit &amp; <span>Withdraw</span></h1>
+        </div>
+
+        <!-- Balance Card -- reads live from Firestore -->
+        <div class="balance-card">
+            <div class="bal-left">
+                <div class="bal-label">Available Balance</div>
+                <div class="bal-amount" id="balAmount">Loading...</div>
+                <div class="bal-sub">KO Investor Account</div>
+            </div>
+            <div class="bal-right">
+                <span class="bal-badge green">Active</span>
+                <span class="bal-badge gold">KO Verified</span>
+            </div>
+        </div>
+
+        <div class="tab-row">
+            <button class="tab-btn active" id="tabDep" onclick="switchTab('deposit')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
+                </svg>
+                Deposit
+            </button>
+            <button class="tab-btn" id="tabWith" onclick="switchTab('withdraw')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="19" x2="12" y2="5" />
+                    <polyline points="5 12 12 5 19 12" />
+                </svg>
+                Withdraw
+            </button>
+        </div>
+
+        <!-- ══════════ DEPOSIT ══════════ -->
+        <div class="section active" id="depositSection">
+            <div class="limit-row">
+                <div class="limit-card green">
+                    <span class="lc-label">Min Deposit</span>
+                    <span class="lc-val">$10</span>
+                    <span class="lc-sub">Per transaction</span>
+                </div>
+                <div class="limit-card red">
+                    <span class="lc-label">Max Deposit</span>
+                    <span class="lc-val">$10,000</span>
+                    <span class="lc-sub">Per transaction</span>
+                </div>
+            </div>
+
+            <div class="crypto-label">Select Currency</div>
+            <div class="crypto-grid" id="depCryptoGrid">
+                <div class="crypto-tile selected" data-coin="BTC" data-addr="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(247,147,26,0.15);"><img
+                            src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC"></div>
+                    <div class="crypto-name">Bitcoin</div>
+                    <div class="crypto-sym">BTC</div>
+                </div>
+                <div class="crypto-tile" data-coin="USDT" data-addr="TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(38,161,123,0.15);"><img
+                            src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT"></div>
+                    <div class="crypto-name">Tether</div>
+                    <div class="crypto-sym">USDT TRC20</div>
+                </div>
+                <div class="crypto-tile" data-coin="TRX" data-addr="TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(235,0,27,0.12);"><img
+                            src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX"></div>
+                    <div class="crypto-name">TRON</div>
+                    <div class="crypto-sym">TRX</div>
+                </div>
+                <div class="crypto-tile" data-coin="ETH" data-addr="0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(98,126,234,0.15);"><img
+                            src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH"></div>
+                    <div class="crypto-name">Ethereum</div>
+                    <div class="crypto-sym">ETH ERC20</div>
+                </div>
+                <div class="crypto-tile" data-coin="BNB" data-addr="bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(240,185,11,0.15);"><img
+                            src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="BNB"></div>
+                    <div class="crypto-name">BNB</div>
+                    <div class="crypto-sym">BEP20</div>
+                </div>
+                <div class="crypto-tile" data-coin="SOL" data-addr="HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(153,69,255,0.15);"><img
+                            src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL"></div>
+                    <div class="crypto-name">Solana</div>
+                    <div class="crypto-sym">SOL</div>
+                </div>
+                <div class="crypto-tile" data-coin="LTC" data-addr="LX2LMYXtuv5JpToEmtivkBuzk27Rp5RSMm"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(191,191,191,0.12);"><img
+                            src="https://cryptologos.cc/logos/litecoin-ltc-logo.png" alt="LTC"></div>
+                    <div class="crypto-name">Litecoin</div>
+                    <div class="crypto-sym">LTC</div>
+                </div>
+                <div class="crypto-tile" data-coin="XRP" data-addr="rN7n3473SaZBCG4dFL75SYkfpgDMZPbkxq"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(0,166,255,0.12);"><img
+                            src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="XRP"></div>
+                    <div class="crypto-name">Ripple</div>
+                    <div class="crypto-sym">XRP</div>
+                </div>
+                <div class="crypto-tile" data-coin="DOGE" data-addr="DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L"
+                    onclick="selectCoin(this,'dep')">
+                    <div class="crypto-icon" style="background:rgba(195,163,39,0.15);"><img
+                            src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" alt="DOGE"></div>
+                    <div class="crypto-name">Dogecoin</div>
+                    <div class="crypto-sym">DOGE</div>
+                </div>
+            </div>
+
+            <div class="address-box show" id="depAddressBox">
+                <div class="ab-label">
+                    <img id="depCoinLogo" src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="logo"
+                        style="width:18px;height:18px;object-fit:contain;margin-bottom:2px;">
+                    Send to this address
+                    <span class="network-badge" id="depNetworkBadge">BTC</span>
+                </div>
+                <div class="qr-col"
+                    style="display:flex; flex-direction:column; align-items:center; gap:14px; margin-bottom:16px;">
+                    <img id="depQrImage" src="" alt="QR Code" onerror="this.style.display='none'"
+                        style="width:150px;height:150px;object-fit:contain;display:none;border-radius:10px;background:#fff;padding:5px;">
+                    <div class="addr-text" id="depAddress" style="text-align:center;">...</div>
+                </div>
+                <button class="copy-btn" id="depCopyBtn" onclick="copyAddress()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy Address
+                </button>
+                <div class="address-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    Send only <strong id="warnCoin">BTC</strong> to this address. Sending any other coin will result in
+                    permanent loss of funds.
+                </div>
+            </div>
+
+            <div class="field" id="dep-field-amount">
+                <label>Amount (USD)</label>
+                <div class="amount-wrap">
+                    <span class="currency-prefix">$</span>
+                    <input type="number" id="depAmount" placeholder="0.00" min="10" max="10000"
+                        oninput="updateDepFee()">
+                    <span class="crypto-equiv" id="depEquiv"></span>
+                </div>
+                <div class="quick-pills">
+                    <span class="pill" onclick="setAmount('dep',10)">$10</span>
+                    <span class="pill" onclick="setAmount('dep',50)">$50</span>
+                    <span class="pill" onclick="setAmount('dep',100)">$100</span>
+                    <span class="pill" onclick="setAmount('dep',500)">$500</span>
+                    <span class="pill" onclick="setAmount('dep',1000)">$1K</span>
+                    <span class="pill" onclick="setAmount('dep',5000)">$5K</span>
+                </div>
+                <div class="field-error" id="depAmountErr">Amount must be between $10 and $10,000.</div>
+            </div>
+
+            <div class="fee-row" id="depFeeRow" style="display:none;">
+                <div class="fee-line"><span>Deposit Amount</span><span id="depFeeAmt">--</span></div>
+                <div class="fee-line"><span>Network Fee</span><span id="depFeeNet">--</span></div>
+                <div class="fee-line total"><span>You Will Receive</span><span id="depFeeTotal">--</span></div>
+            </div>
+
+            <button class="btn-submit" id="btnDeposit" onclick="submitDeposit()">
+                <span class="btn-text">Confirm Deposit</span>
+                <div class="btn-spinner"></div>
+            </button>
+        </div>
+
+        <!-- ══════════ WITHDRAW ══════════ -->
+        <div class="section" id="withdrawSection">
+            <div class="limit-row">
+                <div class="limit-card green">
+                    <span class="lc-label">Min Withdrawal</span>
+                    <span class="lc-val">$100</span>
+                    <span class="lc-sub">Per transaction</span>
+                </div>
+                <div class="limit-card red">
+                    <span class="lc-label">Max Withdrawal</span>
+                    <span class="lc-val">$1,000</span>
+                    <span class="lc-sub">Per transaction</span>
+                </div>
+            </div>
+
+            <!-- ── LOCKED WITHDRAWAL DESTINATION (auto-filled from bound wallet) ── -->
+            <div class="crypto-label">Withdrawal Destination</div>
+
+            <!-- Shown when user has a bound address -->
+            <div id="withDestBound"
+                style="display:none;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                    <span
+                        style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">Sending
+                        To</span>
+                    <span
+                        style="font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:6px;background:rgba(200,169,110,0.12);color:var(--gold);border:1px solid rgba(200,169,110,0.25);">🔒
+                        LOCKED</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div
+                        style="width:42px;height:42px;border-radius:12px;background:rgba(232,0,29,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <img id="withDestLogo" src="" alt="" style="width:26px;height:26px;object-fit:contain;">
+                        <span id="withDestInitials"
+                            style="font-weight:800;color:var(--red2);font-size:15px;display:none;"></span>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div id="withDestProvider" style="font-size:14px;font-weight:700;color:var(--text);">—</div>
+                        <div id="withDestAddress"
+                            style="font-size:12px;color:var(--muted);font-family:monospace;word-break:break-all;line-height:1.5;">
+                            —</div>
+                        <div id="withDestName" style="font-size:12px;color:var(--gold);margin-top:2px;display:none;">—
+                        </div>
+                    </div>
+                </div>
+                <div
+                    style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5;display:flex;gap:8px;align-items:flex-start;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:14px;height:14px;flex-shrink:0;margin-top:1px;color:var(--muted);">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Withdrawals can only be sent to your bound address. To change it, contact support.
+                </div>
+            </div>
+
+            <!-- Shown when user has NOT bound an address yet -->
+            <div id="withDestEmpty"
+                style="display:none;background:rgba(232,0,29,0.06);border:1px solid rgba(232,0,29,0.2);border-radius:14px;padding:20px 16px;margin-bottom:18px;text-align:center;">
+                <div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px;">No withdrawal address
+                    bound</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">You must bind a
+                    withdrawal wallet before you can withdraw. This is a one-time setup.</div>
+                <a href="#/account"
+                    style="display:inline-block;padding:10px 20px;background:var(--red);color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:10px;text-decoration:none;box-shadow:0 4px 16px rgba(232,0,29,0.3);">Bind
+                    Wallet →</a>
+            </div>
+
+            <div class="field" id="with-field-amount">
+                <label>Amount (USD)</label>
+                <div class="amount-wrap">
+                    <span class="currency-prefix">$</span>
+                    <input type="number" id="withAmount" placeholder="0.00" min="100" max="1000"
+                        oninput="updateWithFee()">
+                    <span class="crypto-equiv" id="withEquiv"></span>
+                </div>
+                <div class="quick-pills">
+                    <span class="pill" onclick="setAmount('with',100)">$100</span>
+                    <span class="pill" onclick="setAmount('with',250)">$250</span>
+                    <span class="pill" onclick="setAmount('with',500)">$500</span>
+                    <span class="pill" onclick="setAmount('with',1000)">$1K</span>
+                </div>
+                <div class="field-error" id="withAmountErr">Amount must be between $100 and $1,000.</div>
+            </div>
+
+            <div class="fee-row" id="withFeeRow" style="display:none;">
+                <div class="fee-line"><span>Withdrawal Amount</span><span id="withFeeAmt">--</span></div>
+                <div class="fee-line"><span>Network Fee (~1%)</span><span id="withFeeNet">--</span></div>
+                <div class="fee-line total"><span>You Will Receive</span><span id="withFeeTotal">--</span></div>
+            </div>
+
+            <button class="btn-submit" id="btnWithdraw" onclick="submitWithdraw()">
+                <span class="btn-text">Confirm Withdrawal</span>
+                <div class="btn-spinner"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- PAYMENT PENDING PANEL -->
+    <div id="paymentPanel" style="display:none;">
+        <div class="wrapper" style="padding-top:0;">
+            <div
+                style="background:linear-gradient(135deg,#18181e,#1a0408);border:1px solid rgba(232,0,29,0.25);border-radius:20px;padding:24px 20px;margin-bottom:20px;">
+                <div style="text-align:center;margin-bottom:20px;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red2);margin-bottom:6px;">
+                        Step 2 of 2</div>
+                    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--text);">
+                        Make Your <span style="color:var(--red);">Payment</span></div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:6px;">Send exactly <strong id="ppAmount"
+                            style="color:var(--text);">$0.00</strong> worth of <strong id="ppCoin"
+                            style="color:var(--text);">BTC</strong> to the address below</div>
+                </div>
+
+                <div
+                    style="background:rgba(232,0,29,0.08);border:1px solid rgba(232,0,29,0.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:18px;">
+                    <div id="ppCountdownLabel"
+                        style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
+                        Complete payment before timer expires</div>
+                    <div id="ppCountdown"
+                        style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--red2);letter-spacing:4px;">
+                        15:00</div>
+                </div>
+
+                <div
+                    style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:18px;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+                        Send To This Address</div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:16px;">
+                        <img id="ppQrImage" src="" alt="QR Code" onerror="this.style.display='none'"
+                            style="width:150px;height:150px;object-fit:contain;display:none;background:white;padding:5px;border-radius:10px;flex-shrink:0;">
+                        <div id="ppAddress"
+                            style="font-size:12px;color:var(--text);word-break:break-all;line-height:1.6;font-family:monospace;text-align:center;">
+                        </div>
+                    </div>
+                    <button
+                        onclick="navigator.clipboard.writeText(document.getElementById('ppAddress').textContent);this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy Address',2000);"
+                        style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">
+                        Copy Address
+                    </button>
+                    <div
+                        style="margin-top:10px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--gold);line-height:1.5;">
+                        ⚠ Send only <strong id="ppCoin2">BTC</strong> to this address. Sending any other coin will
+                        result in permanent loss of funds.
+                    </div>
+                </div>
+
+                <button id="btnDone" onclick="donePayment()"
+                    style="width:100%;padding:15px;background:var(--green);color:#111;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;box-shadow:0 4px 24px rgba(61,220,132,0.3);margin-bottom:10px;">
+                    I've Paid — Done ✓
+                </button>
+                <button onclick="cancelPayment()"
+                    style="width:100%;padding:13px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+                    ← Cancel / Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <span id="toastMsg">Done!</span>
+    </div>
+
+    
+
+    
+
+    <!-- Firebase Auth Guard + Firestore -->
+    
+
+    <!-- PWA Service Worker Registration -->
+<script>
+window.__pageInit['deposit'] = function() {
+const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+const db = window.__fb.db; const auth = window.__fb.auth;
+
+        let currentUser = null;
+
+        async function __auth_main(){ const user = window.currentUser;
+            if (!user) { window.location.href = 'signin.html'; return; }
+            currentUser = user;
+
+            try {
+                try {
+                    const wSnap = await getDoc(doc(db, 'settings', 'wallets'));
+                    if (wSnap.exists()) {
+                        window.walletSettings = wSnap.data();
+                        const activeDep = document.querySelector('#depCryptoGrid .crypto-tile.selected');
+                        if (activeDep) selectCoin(activeDep, 'dep');
+                    }
+                } catch (e) { }
+
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    const balance = d.balance || 0;
+                    document.getElementById('balAmount').textContent =
+                        '$' + balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                    // ── Load bound withdrawal wallet and fill the locked destination card ──
+                    populateWithdrawDestination(d.walletCoin, d.walletAddress, d.walletAccountName);
+                }
+            } catch (e) {
+                document.getElementById('balAmount').textContent = '$0.00';
+            }
+
+            window.koSignOut = () => window.__fb.signOut(window.__fb.auth).then(() => window.location.href = 'signin.html');
+
+            const loader = document.getElementById('appLoader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 400);
+            }
+        }
+
+        // ── Fill the locked withdrawal destination card from the user's bound wallet ──
+        window._boundWallet = null;
+        const COIN_LOGOS = {
+            BTC: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+            USDT: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
+            ETH: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+            TRX: 'https://cryptologos.cc/logos/tron-trx-logo.png',
+            BNB: 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+            SOL: 'https://cryptologos.cc/logos/solana-sol-logo.png',
+            LTC: 'https://cryptologos.cc/logos/litecoin-ltc-logo.png',
+            DOGE: 'https://cryptologos.cc/logos/dogecoin-doge-logo.png'
+        };
+        const COIN_LABELS = {
+            BTC: 'Bitcoin (BTC)', USDT: 'Tether (USDT TRC20)', ETH: 'Ethereum (ETH)',
+            TRX: 'TRON (TRX)', BNB: 'BNB (BEP20)', SOL: 'Solana (SOL)',
+            LTC: 'Litecoin (LTC)', DOGE: 'Dogecoin (DOGE)',
+            OPAY: 'OPay', PALMPAY: 'PalmPay', MONIEPOINT: 'Moniepoint'
+        };
+
+        function populateWithdrawDestination(coin, address, accountName) {
+            const boundBox = document.getElementById('withDestBound');
+            const emptyBox = document.getElementById('withDestEmpty');
+            const btn = document.getElementById('btnWithdraw');
+
+            if (!address) {
+                // No bound wallet → block withdrawal
+                window._boundWallet = null;
+                boundBox.style.display = 'none';
+                emptyBox.style.display = 'block';
+                if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+                return;
+            }
+
+            const c = (coin || '').toUpperCase();
+            window._boundWallet = { coin: c, address: address, name: accountName || '' };
+
+            boundBox.style.display = 'block';
+            emptyBox.style.display = 'none';
+            if (btn) { btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+
+            // Provider label
+            document.getElementById('withDestProvider').textContent = COIN_LABELS[c] || c;
+            document.getElementById('withDestAddress').textContent = address;
+
+            // Logo (crypto) or initials fallback (fiat)
+            const logoEl = document.getElementById('withDestLogo');
+            const initialsEl = document.getElementById('withDestInitials');
+            if (COIN_LOGOS[c]) {
+                logoEl.src = COIN_LOGOS[c];
+                logoEl.style.display = 'block';
+                initialsEl.style.display = 'none';
+            } else {
+                logoEl.style.display = 'none';
+                initialsEl.style.display = 'block';
+                initialsEl.textContent = c.slice(0, 2);
+            }
+
+            // Account name (fiat only)
+            const nameEl = document.getElementById('withDestName');
+            if (accountName) {
+                nameEl.style.display = 'block';
+                nameEl.textContent = '👤 ' + accountName;
+            } else {
+                nameEl.style.display = 'none';
+            }
+
+            // Keep global withCoin in sync for fee calc
+            withCoin = c;
+        }
+
+        // ── saves to both deposits AND transactions ──
+        window._saveDepositToFirestore = async function (amount, coin) {
+            if (!currentUser) return;
+            const amt = parseFloat(amount);
+            try {
+                await addDoc(collection(db, 'deposits'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amt,
+                    coin: coin,
+                    network: coin,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+                // Also write to transactions so income.html picks it up
+                await addDoc(collection(db, 'transactions'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    type: 'deposit',
+                    amount: amt,
+                    coin: coin,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error('Deposit save failed:', e);
+                throw e;
+            }
+        };
+
+        // ── FIX: deducts balance immediately on withdrawal submission ──
+        window._saveWithdrawalToFirestore = async function (amount, coin, address) {
+            if (!currentUser) return;
+            const amt = parseFloat(amount);
+            try {
+                // 1. Fetch current balance and check sufficiency
+                const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+                if (!userSnap.exists()) throw new Error('User not found');
+                const currentBalance = userSnap.data().balance || 0;
+                if (currentBalance < amt) throw new Error('Insufficient balance');
+
+                // 2. Deduct balance atomically
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    balance: increment(-amt)
+                });
+
+                // 3. Update balance display immediately
+                const newBal = currentBalance - amt;
+                document.getElementById('balAmount').textContent =
+                    '$' + newBal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                // 4. Save withdrawal record
+                await addDoc(collection(db, 'withdrawals'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amt,
+                    coin: coin,
+                    address: address,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                // 5. Save to transactions so income.html picks it up
+                await addDoc(collection(db, 'transactions'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    type: 'withdrawal',
+                    amount: amt,
+                    coin: coin,
+                    address: address,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error('Withdrawal save failed:', e);
+                throw e;
+            }
+        };
+    
+try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[deposit] auth_main', e); }
+
+/* ---- page UI script(s) ---- */
+try {
+
+        const rates = { BTC: 63500, USDT: 1, TRX: 0.12, ETH: 3400, BNB: 580, SOL: 170, LTC: 82, XRP: 0.52, DOGE: 0.15 };
+
+        function switchTab(tab) {
+            document.getElementById('depositSection').classList.toggle('active', tab === 'deposit');
+            document.getElementById('withdrawSection').classList.toggle('active', tab === 'withdraw');
+            document.getElementById('tabDep').classList.toggle('active', tab === 'deposit');
+            document.getElementById('tabWith').classList.toggle('active', tab === 'withdraw');
+        }
+
+        let depCoin = 'BTC', withCoin = 'BTC';
+        const depAddrs = {};
+        document.querySelectorAll('#depCryptoGrid .crypto-tile').forEach(t => {
+            depAddrs[t.dataset.coin] = t.dataset.addr;
+        });
+
+        function selectCoin(el, mode) {
+            // Only the deposit tab has a coin grid now; withdrawal uses the bound wallet.
+            const grid = '#depCryptoGrid';
+            document.querySelectorAll(grid + ' .crypto-tile').forEach(t => t.classList.remove('selected'));
+            el.classList.add('selected');
+            const coin = el.dataset.coin;
+            const logoSrc = el.querySelector('img') ? el.querySelector('img').src : '';
+            depCoin = coin;
+
+            const coinData = window.walletSettings ? window.walletSettings[coin] : null;
+            const addr = (coinData && coinData.address) ? coinData.address : (depAddrs[coin] || 'Address not available');
+            const qrUrl = (coinData && coinData.qr) ? coinData.qr : '';
+
+            document.getElementById('depAddress').textContent = addr;
+            document.getElementById('depNetworkBadge').textContent = coin;
+            document.getElementById('warnCoin').textContent = coin;
+
+            const logoImg = document.getElementById('depCoinLogo');
+            if (logoImg && logoSrc) logoImg.src = logoSrc;
+
+            const qrImg = document.getElementById('depQrImage');
+            if (qrImg) {
+                if (qrUrl) {
+                    qrImg.src = qrUrl;
+                    qrImg.style.display = 'block';
+                } else {
+                    qrImg.style.display = 'none';
+                }
+            }
+
+            updateDepFee();
+        }
+
+        function copyAddress() {
+            const addr = document.getElementById('depAddress').textContent;
+            navigator.clipboard.writeText(addr).catch(() => { });
+            const btn = document.getElementById('depCopyBtn');
+            btn.classList.add('copied');
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Address`;
+            }, 2000);
+        }
+
+        function setAmount(mode, val) {
+            document.getElementById(mode === 'dep' ? 'depAmount' : 'withAmount').value = val;
+            document.querySelectorAll(mode === 'dep' ? '#depositSection .pill' : '#withdrawSection .pill').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            mode === 'dep' ? updateDepFee() : updateWithFee();
+        }
+
+        function updateDepFee() {
+            const amt = parseFloat(document.getElementById('depAmount').value);
+            const row = document.getElementById('depFeeRow');
+            const equiv = document.getElementById('depEquiv');
+            if (!amt || amt < 1) { row.style.display = 'none'; equiv.textContent = ''; return; }
+            const fee = Math.max(1, amt * 0.005);
+            const receive = amt - fee;
+            const rate = rates[depCoin] || 1;
+            equiv.textContent = '≈ ' + (amt / rate).toFixed(6) + ' ' + depCoin;
+            document.getElementById('depFeeAmt').textContent = '$' + amt.toFixed(2);
+            document.getElementById('depFeeNet').textContent = '$' + fee.toFixed(2);
+            document.getElementById('depFeeTotal').textContent = '$' + receive.toFixed(2);
+            row.style.display = 'flex';
+        }
+
+        function updateWithFee() {
+            const amt = parseFloat(document.getElementById('withAmount').value);
+            const row = document.getElementById('withFeeRow');
+            const equiv = document.getElementById('withEquiv');
+            if (!amt || amt < 1) { row.style.display = 'none'; equiv.textContent = ''; return; }
+            const fee = amt * 0.01;
+            const receive = amt - fee;
+            const coin = (window._boundWallet && window._boundWallet.coin) || withCoin;
+            const isFiatProvider = ['OPAY', 'PALMPAY', 'MONIEPOINT'].includes((coin || '').toUpperCase());
+            if (isFiatProvider) {
+                equiv.textContent = '';
+            } else {
+                const rate = rates[coin] || 1;
+                equiv.textContent = '≈ ' + (amt / rate).toFixed(6) + ' ' + coin;
+            }
+            document.getElementById('withFeeAmt').textContent = '$' + amt.toFixed(2);
+            document.getElementById('withFeeNet').textContent = '$' + fee.toFixed(2);
+            document.getElementById('withFeeTotal').textContent = '$' + receive.toFixed(2);
+            row.style.display = 'flex';
+        }
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.toggle('error', isError);
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3200);
+        }
+
+        let _pendingDepAmt = 0, _pendingDepCoin = '', _countdownInterval = null;
+
+        function submitDeposit() {
+            const amt = parseFloat(document.getElementById('depAmount').value);
+            const field = document.getElementById('dep-field-amount');
+            field.classList.remove('has-error');
+            if (!amt || amt < 10 || amt > 10000) { field.classList.add('has-error'); return; }
+            _pendingDepAmt = amt;
+            _pendingDepCoin = depCoin;
+
+            document.getElementById('depositSection').style.display = 'none';
+
+            const addr = document.getElementById('depAddress').textContent;
+            document.getElementById('ppCoin').textContent = depCoin;
+            document.getElementById('ppCoin2').textContent = depCoin;
+            document.getElementById('ppAddress').textContent = addr;
+            document.getElementById('ppAmount').textContent = '$' + amt.toFixed(2);
+
+            const depQr = document.getElementById('depQrImage');
+            const ppQr = document.getElementById('ppQrImage');
+            if (depQr && ppQr) {
+                ppQr.src = depQr.src;
+                ppQr.style.display = depQr.style.display;
+            }
+
+            document.getElementById('paymentPanel').style.display = 'block';
+
+            let secs = 15 * 60;
+            clearInterval(_countdownInterval);
+            _countdownInterval = setInterval(() => {
+                const m = Math.floor(secs / 60);
+                const s = secs % 60;
+                document.getElementById('ppCountdown').textContent =
+                    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+                if (secs <= 0) {
+                    clearInterval(_countdownInterval);
+                    document.getElementById('ppCountdown').textContent = '00:00';
+                    document.getElementById('ppCountdownLabel').textContent = 'Time expired -- contact support if you already paid.';
+                }
+                secs--;
+            }, 1000);
+        }
+
+        function donePayment() {
+            clearInterval(_countdownInterval);
+            const btn = document.getElementById('btnDone');
+            btn.disabled = true;
+            btn.textContent = 'Submitting…';
+
+            if (window._saveDepositToFirestore) {
+                window._saveDepositToFirestore(_pendingDepAmt, _pendingDepCoin).then(() => {
+                    _resetAfterPayment(btn);
+                }).catch(() => {
+                    _resetAfterPayment(btn);
+                });
+            } else {
+                setTimeout(() => _resetAfterPayment(btn), 600);
+            }
+        }
+
+        function _resetAfterPayment(btn) {
+            document.getElementById('paymentPanel').style.display = 'none';
+            document.getElementById('depositSection').style.display = 'block';
+            showToast('Payment submitted — awaiting admin approval ✓');
+            document.getElementById('depAmount').value = '';
+            document.getElementById('depFeeRow').style.display = 'none';
+            document.getElementById('depEquiv').textContent = '';
+            document.querySelectorAll('#depositSection .pill').forEach(p => p.classList.remove('active'));
+            btn.disabled = false;
+            btn.textContent = "I've Paid — Done ✓";
+        }
+
+        function cancelPayment() {
+            clearInterval(_countdownInterval);
+            document.getElementById('paymentPanel').style.display = 'none';
+            document.getElementById('depositSection').style.display = 'block';
+        }
+
+        function submitWithdraw() {
+            const amt = parseFloat(document.getElementById('withAmount').value);
+            let valid = true;
+
+            document.getElementById('with-field-amount').classList.remove('has-error');
+
+            // Must have a bound address (set by the Firebase module on load)
+            if (!window._boundWallet || !window._boundWallet.address) {
+                showToast('Please bind a withdrawal wallet first.', true);
+                return;
+            }
+
+            if (!amt || amt < 100 || amt > 1000) { document.getElementById('with-field-amount').classList.add('has-error'); valid = false; }
+            if (!valid) return;
+
+            const coin = window._boundWallet.coin || '';
+            const addr = window._boundWallet.address;
+            // For fiat providers, package name+number so the admin panel can parse it
+            const isFiatProvider = ['OPAY', 'PALMPAY', 'MONIEPOINT'].includes((coin || '').toUpperCase());
+            const payloadAddr = isFiatProvider
+                ? 'Bank:' + coin + '|Acc:' + addr + '|Holder:' + (window._boundWallet.name || '')
+                : addr;
+
+            const btn = document.getElementById('btnWithdraw');
+            btn.classList.add('loading');
+
+            const resetForm = () => {
+                btn.classList.remove('loading');
+                document.getElementById('withAmount').value = '';
+                document.getElementById('withFeeRow').style.display = 'none';
+                document.getElementById('withEquiv').textContent = '';
+                document.querySelectorAll('#withdrawSection .pill').forEach(p => p.classList.remove('active'));
+            };
+
+            if (window._saveWithdrawalToFirestore) {
+                window._saveWithdrawalToFirestore(amt, coin, payloadAddr).then(() => {
+                    resetForm();
+                    showToast('Withdrawal of $' + amt.toFixed(2) + ' submitted via ' + coin + ' ✓');
+                }).catch(err => {
+                    btn.classList.remove('loading');
+                    showToast(
+                        err.message === 'Insufficient balance'
+                            ? 'Insufficient balance for this withdrawal.'
+                            : 'Withdrawal failed — please try again.',
+                        true
+                    );
+                });
+            } else {
+                setTimeout(() => {
+                    resetForm();
+                    showToast('Withdrawal of $' + amt.toFixed(2) + ' submitted via ' + coin + ' ✓');
+                }, 1800);
+            }
+        }
+
+        (() => {
+            const params = (window.__routeQuery || new URLSearchParams(window.location.search));
+            if (params.get('tab') === 'withdraw') switchTab('withdraw');
+            else switchTab('deposit');
+        })();
+    
+
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    
+} catch(e){ console.error('[deposit] ui', e); }
+};
+</script>

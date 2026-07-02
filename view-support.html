@@ -1,0 +1,250 @@
+<!-- Page Content -->
+    <div class="page-wrap">
+
+        <div class="page-title">Invite &amp; Earn</div>
+        <div class="page-sub">Share your code — earn commissions instantly.</div>
+
+        <!-- Invitation Code + Link -->
+        <div class="ref-card">
+            <div class="ref-row">
+                <div class="ref-info">
+                    <div class="ref-val" id="invCode">—</div>
+                    <div class="ref-label">Invitation Code</div>
+                </div>
+                <button class="copy-btn" id="copyCodeBtn">Copy Code</button>
+            </div>
+            <div class="divider"></div>
+            <div class="ref-row">
+                <div class="ref-info">
+                    <div class="ref-val" id="invLink">—</div>
+                    <div class="ref-label">Invitation Link</div>
+                </div>
+                <button class="copy-btn" id="copyLinkBtn">Copy Link</button>
+            </div>
+        </div>
+
+        <!-- Total Guests & Income -->
+        <div class="stat-pair">
+            <div class="stat-box">
+                <div class="stat-box-val" id="t1">—</div>
+                <div class="stat-box-label">Total Guests</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-val" id="t2">—</div>
+                <div class="stat-box-label">Invited Income</div>
+            </div>
+        </div>
+
+        <!-- Commission Table -->
+        <div class="comm-card">
+            <div class="comm-head">
+                <span>Commission</span>
+                <span>Guests</span>
+                <span>Income</span>
+            </div>
+            <div class="comm-row">
+                <span class="rate">Level 1 · 37%</span>
+                <span class="guests" id="task_count1">0</span>
+                <span class="income" id="task_income1">$0.00</span>
+            </div>
+            <div class="comm-row">
+                <span class="rate">Level 2 · 1%</span>
+                <span class="guests" id="task_count3">0</span>
+                <span class="income" id="task_income3">$0.00</span>
+            </div>
+            <div class="comm-row">
+                <span class="rate">Level 3 · 1%</span>
+                <span class="guests" id="task_count4">0</span>
+                <span class="income" id="task_income4">$0.00</span>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="info-card">
+            <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="color:var(--red2)">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v4l3 3" />
+                </svg>
+                How It Works
+            </h3>
+            <p>When a friend you invite signs up and invests, you immediately receive a cash reward of <span
+                    class="highlight">37%</span> of their investment amount.</p>
+            <p>When members of your <span class="highlight-red">Level 2</span> team invest, you receive a <span
+                    class="highlight">1% cash bonus</span>.</p>
+            <p>When members of your <span class="highlight-red">Level 3</span> team invest, you receive a <span
+                    class="highlight">1% cash bonus</span>.</p>
+            <p>Once a team member invests, the cash bonus is <span class="highlight">instantly credited</span> to your
+                account and you can withdraw it immediately.</p>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Copied!</div>
+
+    <!-- Bottom Nav -->
+    
+
+    <!-- Ticker Script -->
+    
+
+    <!-- Copy Helper -->
+    
+
+    <!-- Firebase Logic -->
+    
+
+    <!-- PWA Service Worker -->
+<script>
+window.__pageInit['support'] = function() {
+const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+const db = window.__fb.db; const auth = window.__fb.auth;
+
+        const fmt2 = n => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        async function __auth_main(){ const user = window.currentUser;
+            if (!user) { window.location.href = 'signin.html'; return; }
+
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (!snap.exists()) return;
+
+                const d = snap.data();
+
+                // ── Invitation code & link ──
+                const code = d.referralCode || d.inviteCode || d.refCode || d.invitation || user.uid.slice(0, 8).toUpperCase();
+                const base = window.location.origin + window.location.pathname.replace('support.html', '');
+                const link = base + 'signup.html?ref=' + code;
+
+                document.getElementById('invCode').textContent = code;
+
+                const linkEl = document.getElementById('invLink');
+                // Show truncated but store full
+                linkEl.textContent = link.length > 38 ? link.slice(0, 38) + '…' : link;
+                linkEl.dataset.full = link;
+
+                // ── Query real dynamic Level 1 count from Firestore ──
+                let lv1CountReal = 0;
+                try {
+                    const codesToQuery = [code];
+                    const defaultRefCode = 'KO-' + user.uid.substring(0, 6).toUpperCase();
+                    if (defaultRefCode !== code) codesToQuery.push(defaultRefCode);
+                    const fallbackCode = user.uid.slice(0, 8).toUpperCase();
+                    if (fallbackCode !== code && fallbackCode !== defaultRefCode) codesToQuery.push(fallbackCode);
+
+                    const q = query(collection(db, 'users'), where('referredBy', 'in', codesToQuery));
+                    const querySnapshot = await getDocs(q);
+                    lv1CountReal = querySnapshot.size;
+                } catch (err) {
+                    console.error('Error querying referrals:', err);
+                }
+
+                // Update the user document if the dynamic count is higher
+                if (lv1CountReal > Number(d.lv1Count || d.task1_count || 0)) {
+                    try {
+                        await updateDoc(doc(db, 'users', user.uid), {
+                            lv1Count: lv1CountReal
+                        });
+                    } catch (writeErr) {
+                        console.error('Error updating lv1Count in user doc:', writeErr);
+                    }
+                }
+
+                // ── Team stats ──
+                const lv1Income = d.lv1TeamIncome || d.lv1_team_income || 0;
+                const lv2Income = d.lv2TeamIncome || d.lv2_team_income || 0;
+                const lv3Income = d.lv3TeamIncome || d.lv3_team_income || 0;
+                const lv1Count = Math.max(Number(d.lv1Count || d.task1_count || 0), lv1CountReal);
+                const lv2Count = d.lv2Count || d.task2_count || 0;
+                const lv3Count = d.lv3Count || d.task3_count || 0;
+                const allCount = d.allTeamCount || d.all_team_count || (Number(lv1Count) + Number(lv2Count) + Number(lv3Count));
+                const allIncome = d.allTeamIncome || d.all_team_income || (Number(lv1Income) + Number(lv2Income) + Number(lv3Income));
+
+                document.getElementById('t1').textContent = allCount;
+                document.getElementById('t2').textContent = '$' + fmt2(allIncome);
+
+                document.getElementById('task_count1').textContent = lv1Count;
+                document.getElementById('task_income1').textContent = '$' + fmt2(lv1Income);
+                document.getElementById('task_count3').textContent = lv2Count;
+                document.getElementById('task_income3').textContent = '$' + fmt2(lv2Income);
+                document.getElementById('task_count4').textContent = lv3Count;
+                document.getElementById('task_income4').textContent = '$' + fmt2(lv3Income);
+
+            } catch (e) { console.error('Invite page error:', e); }
+        }
+    
+try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[support] auth_main', e); }
+
+/* ---- page UI script(s) ---- */
+try {
+
+        (function () {
+            const tickerData = [
+                { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
+                { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
+                { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
+                { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
+                { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
+                { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
+                { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
+                { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
+            ];
+            const inner = document.getElementById('tickerInner');
+            const build = () => tickerData.map(d =>
+                `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
+            ).join('');
+            inner.innerHTML = build() + build();
+        })();
+    
+
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg || 'Copied!';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function copyText(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => fallbackCopy(text));
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Copied!');
+        }
+
+        document.getElementById('copyCodeBtn').addEventListener('click', () => {
+            const code = document.getElementById('invCode').textContent.trim();
+            if (code && code !== '—') copyText(code);
+        });
+
+        document.getElementById('copyLinkBtn').addEventListener('click', () => {
+            const link = document.getElementById('invLink').dataset.full || document.getElementById('invLink').textContent.trim();
+            if (link && link !== '—') copyText(link);
+        });
+    
+
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => { });
+            });
+        }
+    
+} catch(e){ console.error('[support] ui', e); }
+};
+</script>

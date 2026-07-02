@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>KO -- Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e8001d" />
+    <link rel="apple-touch-icon" href="og.png" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #e8001d 0%, #0a0a0b 55%);
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #e8001d 0%, #0a0a0b 55%);
+        }
+
+        /* ---- LOGO ---- */
+        .logo-area {
+            margin-top: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-area img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ---- FORM AREA ---- */
+        .form-area {
+            width: 100%;
+            margin-top: 52px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* Input row */
+        .input-row {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 8px;
+            padding: 0 14px;
+            height: 50px;
+            margin-bottom: 16px;
+        }
+
+        .input-row .prefix {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+            margin-right: 8px;
+            border-right: 1px solid #ddd;
+            padding-right: 10px;
+            line-height: 50px;
+        }
+
+        .input-row input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            color: #111;
+            height: 100%;
+        }
+
+        .input-row input::placeholder {
+            color: #aaa;
+        }
+
+        /* Remember row */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .remember-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #e8001d;
+            cursor: pointer;
+        }
+
+        .remember-row label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        /* Error banner */
+        .alert-error {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .alert-error.show {
+            display: block;
+        }
+
+        /* Login button */
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 100px;
+            background: linear-gradient(to right, #e8001d, #0a0a0b);
+            color: #fff;
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-login:active {
+            opacity: 0.85;
+        }
+
+        .btn-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        .btn-login.loading .btn-spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Signup link */
+        .signup-row {
+            margin-top: 36px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .signup-row a {
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        /* ---- SUCCESS OVERLAY ---- */
+        .success-overlay {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+        }
+
+        .success-check {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .success-check svg {
+            width: 30px;
+            height: 30px;
+            stroke: #fff;
+        }
+
+        .success-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .success-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <!-- LOGO -->
+        <div class="logo-area">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/3065cc9c-d7b6-410c-903a-e3dc00d2d018.png"
+                alt="KO Logo">
+        </div>
+
+        <!-- SIGN IN FORM -->
+        <div id="signinForm" style="width:100%">
+            <div class="form-area">
+
+                <div class="alert-error" id="alertError"></div>
+
+                <!-- Email -->
+                <div class="input-row">
+                    <input type="email" id="email" placeholder="Please enter your email" autocomplete="email"
+                        spellcheck="false">
+                </div>
+
+                <!-- Password -->
+                <div class="input-row">
+                    <input type="password" id="password" placeholder="Please enter your password"
+                        autocomplete="current-password">
+                </div>
+
+                <!-- Remember -->
+                <div class="remember-row">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember the password</label>
+                </div>
+
+                <!-- Login button -->
+                <button class="btn-login" id="btnLogin" onclick="handleSignin()">
+                    <span class="btn-text">Log in now</span>
+                    <div class="btn-spinner"></div>
+                </button>
+            </div>
+
+            <!-- Signup link -->
+            <div class="signup-row">
+                No account?<a href="signup.html">Create an account</a>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-overlay" id="successOverlay">
+            <div class="success-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </div>
+            <div class="success-title">Welcome Back!</div>
+            <p class="success-sub">Signed in successfully. Redirecting to your dashboard…</p>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRVfUeW7fOzLuJMz1GdkYgksAxgrH50g8",
+            authDomain: "coke-fd30d.firebaseapp.com",
+            projectId: "coke-fd30d",
+            storageBucket: "coke-fd30d.firebasestorage.app",
+            messagingSenderId: "1026348733661",
+            appId: "1:1026348733661:web:d06910c6c774aa9303f734"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, user => {
+            if (user) window.location.href = 'index.html';
+        });
+
+        window._fbAuth = auth;
+        window._fbSignIn = signInWithEmailAndPassword;
+    </script>
+
+    <script>
+        // Restore remembered credentials
+        (function () {
+            if (localStorage.getItem('rememberpassword') === '1') {
+                const em = localStorage.getItem('ko_email');
+                const pw = localStorage.getItem('ko_pw');
+                if (em) document.getElementById('email').value = em;
+                if (pw) document.getElementById('password').value = pw;
+                document.getElementById('rememberMe').checked = true;
+            }
+        })();
+
+        async function handleSignin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const alertEl = document.getElementById('alertError');
+            const btn = document.getElementById('btnLogin');
+
+            alertEl.classList.remove('show');
+
+            if (!email || !password) {
+                alertEl.textContent = 'Please enter your email and password.';
+                alertEl.classList.add('show');
+                return;
+            }
+
+            btn.classList.add('loading');
+
+            try {
+                if (!window._fbAuth) throw { code: 'no-fb', message: 'Connection error. Please refresh.' };
+                await window._fbSignIn(window._fbAuth, email, password);
+
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('rememberpassword', '1');
+                    localStorage.setItem('ko_email', email);
+                    localStorage.setItem('ko_pw', password);
+                } else {
+                    localStorage.setItem('rememberpassword', '0');
+                    localStorage.removeItem('ko_email');
+                    localStorage.removeItem('ko_pw');
+                }
+
+                btn.classList.remove('loading');
+                document.getElementById('signinForm').style.display = 'none';
+                document.getElementById('successOverlay').classList.add('show');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1600);
+
+            } catch (err) {
+                btn.classList.remove('loading');
+                const map = {
+                    'auth/user-not-found': 'Invalid email or password.',
+                    'auth/wrong-password': 'Invalid email or password.',
+                    'auth/invalid-credential': 'Invalid email or password.',
+                    'auth/invalid-email': 'Please enter a valid email address.',
+                    'auth/user-disabled': 'This account has been disabled.',
+                    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+                    'auth/network-request-failed': 'Network error. Check your connection.',
+                    'no-fb': err.message
+                };
+                alertEl.textContent = map[err.code] || 'Sign in failed. Please try again.';
+                alertEl.classList.add('show');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleSignin();
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => { });
+            });
+        }
+    </script>
+</body>
+
+</html>

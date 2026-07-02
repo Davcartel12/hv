@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>KO -- Create Account</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="🎉 You've Been Invited — Join KO Investor Hub" />
+    <meta property="og:description"
+        content="Your friend invited you to KO Investor Hub. Create your account and start earning with Coca-Cola dividends today." />
+    <meta property="og:image" content="https://koinvestors.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e8001d" />
+    <link rel="apple-touch-icon" href="og.png" />
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            background: linear-gradient(to bottom, #e8001d 0%, #0a0a0b 55%);
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 24px 40px;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #e8001d 0%, #0a0a0b 55%);
+            overflow-y: auto;
+        }
+
+        /* ---- LOGO ---- */
+        .logo-area {
+            margin-top: 50px;
+            margin-bottom: 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-area img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ---- FORM AREA ---- */
+        .form-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* Input row */
+        .input-row {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 8px;
+            padding: 0 14px;
+            height: 50px;
+            margin-bottom: 16px;
+        }
+
+        .input-row input,
+        .input-row select {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            color: #111;
+            height: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .input-row input::placeholder,
+        .input-row select::placeholder {
+            color: #aaa;
+        }
+
+        .input-row select option {
+            color: #111;
+        }
+
+        .input-row select.placeholder-active {
+            color: #aaa;
+        }
+
+        /* Error text */
+        .field-error {
+            font-size: 12px;
+            color: #ffb3bb;
+            margin-top: -10px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        /* Error input highlight */
+        .input-row.error {
+            border: 2px solid #ffb3bb;
+        }
+
+        /* Global error banner */
+        .alert-error {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .alert-error.show {
+            display: block;
+        }
+
+        /* Submit button */
+        .btn-signup {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 100px;
+            background: linear-gradient(to right, #e8001d, #0a0a0b);
+            color: #fff;
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 4px;
+            position: relative;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-signup:active {
+            opacity: 0.85;
+        }
+
+        .btn-signup:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        .btn-signup.loading .btn-text {
+            display: none;
+        }
+
+        .btn-signup.loading .btn-spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Terms */
+        .terms-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+            text-align: center;
+            margin-top: 14px;
+            line-height: 1.7;
+        }
+
+        .terms-text a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: underline;
+        }
+
+        /* Sign in link */
+        .signin-row {
+            margin-top: 28px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .signin-row a {
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        /* ---- SUCCESS ---- */
+        .success-overlay {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+        }
+
+        .success-check {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .success-check svg {
+            width: 30px;
+            height: 30px;
+            stroke: #fff;
+        }
+
+        .success-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .success-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <!-- LOGO -->
+        <div class="logo-area">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/3065cc9c-d7b6-410c-903a-e3dc00d2d018.png"
+                alt="KO Logo">
+        </div>
+
+        <!-- FORM -->
+        <div id="signupForm" style="width:100%">
+            <div class="form-area">
+
+                <div class="alert-error" id="alertError"></div>
+
+                <!-- Country -->
+                <div class="input-row" id="rowCountry">
+                    <select id="country" class="placeholder-active"
+                        onchange="this.classList.remove('placeholder-active')">
+                        <option value="" disabled selected>Select your country</option>
+                        <option>United States</option>
+                        <option>United Kingdom</option>
+                        <option>Canada</option>
+                        <option>Australia</option>
+                        <option>Germany</option>
+                        <option>France</option>
+                        <option>Japan</option>
+                        <option>Brazil</option>
+                        <option>India</option>
+                        <option>South Africa</option>
+                        <option>Nigeria</option>
+                        <option>Ghana</option>
+                        <option>Kenya</option>
+                        <option>Togo</option>
+                        <option>Côte d'Ivoire</option>
+                        <option>Senegal</option>
+                        <option>Mexico</option>
+                        <option>Argentina</option>
+                        <option>China</option>
+                        <option>Singapore</option>
+                        <option>UAE</option>
+                        <option>Saudi Arabia</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field-error" id="errCountry">Please select your country.</div>
+
+                <!-- Full Name -->
+                <div class="input-row" id="rowName">
+                    <input type="text" id="fullname" placeholder="Full Name" autocomplete="name">
+                </div>
+                <div class="field-error" id="errName">Please enter your full name.</div>
+
+                <!-- Email -->
+                <div class="input-row" id="rowEmail">
+                    <input type="email" id="email" placeholder="Please enter your email" autocomplete="email"
+                        spellcheck="false">
+                </div>
+                <div class="field-error" id="errEmail">Please enter a valid email address.</div>
+
+                <!-- Password -->
+                <div class="input-row" id="rowPassword">
+                    <input type="password" id="password" placeholder="Please enter your password"
+                        autocomplete="new-password">
+                </div>
+                <div class="field-error" id="errPassword">Password must be at least 8 characters.</div>
+
+                <!-- Confirm Password -->
+                <div class="input-row" id="rowConfirm">
+                    <input type="password" id="confirm" placeholder="Confirm your password" autocomplete="new-password">
+                </div>
+                <div class="field-error" id="errConfirm">Passwords do not match.</div>
+
+                <!-- Invite code -->
+                <div class="input-row" id="rowRef">
+                    <input type="text" id="refInput" placeholder="Invite code (optional)">
+                </div>
+
+                <!-- Submit -->
+                <button class="btn-signup" id="btnSignup" onclick="handleSignup()">
+                    <span class="btn-text">Create an account</span>
+                    <div class="btn-spinner"></div>
+                </button>
+
+                <p class="terms-text">
+                    By creating an account you agree to our
+                    <a href="terms.html">Terms of Service</a> and
+                    <a href="privacy.html">Privacy Policy</a>.
+                </p>
+            </div>
+
+            <div class="signin-row">
+                Already have an account?<a href="signin.html">Log in now</a>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-overlay" id="successOverlay">
+            <div class="success-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </div>
+            <div class="success-title">Account Created!</div>
+            <p class="success-sub">Welcome to KO Investor Hub. Redirecting to your dashboard…</p>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getFirestore, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRVfUeW7fOzLuJMz1GdkYgksAxgrH50g8",
+            authDomain: "coke-fd30d.firebaseapp.com",
+            projectId: "coke-fd30d",
+            storageBucket: "coke-fd30d.firebasestorage.app",
+            messagingSenderId: "1026348733661",
+            appId: "1:1026348733661:web:d06910c6c774aa9303f734"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.__signup = async function (email, password, fullname, country, refCode) {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            const user = cred.user;
+            await updateProfile(user, { displayName: fullname });
+            const userRefCode = 'KO-' + user.uid.substring(0, 6).toUpperCase();
+            await setDoc(doc(db, 'users', user.uid), {
+                uid: user.uid,
+                fullName: fullname,
+                email,
+                country,
+                role: 'user',
+                balance: 0,
+                invested: 0,
+                earnings: 0,
+                status: 'active',
+                referredBy: refCode || null,
+                refCode: userRefCode,
+                createdAt: serverTimestamp()
+            });
+            return user;
+        };
+    </script>
+
+    <script>
+        // Pre-fill referral code from URL
+        (function () {
+            const ref = new URLSearchParams(window.location.search).get('ref');
+            if (ref) {
+                const inp = document.getElementById('refInput');
+                inp.value = ref;
+            }
+        })();
+
+        function setFieldError(rowId, errId, show) {
+            document.getElementById(rowId)?.classList.toggle('error', show);
+            const err = document.getElementById(errId);
+            if (err) err.classList.toggle('show', show);
+        }
+
+        async function handleSignup() {
+            const country = document.getElementById('country').value;
+            const fullname = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
+            const alertEl = document.getElementById('alertError');
+
+            alertEl.classList.remove('show');
+
+            const emailOk = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            let valid = true;
+
+            setFieldError('rowCountry', 'errCountry', !country); if (!country) valid = false;
+            setFieldError('rowName', 'errName', !fullname); if (!fullname) valid = false;
+            setFieldError('rowEmail', 'errEmail', !emailOk); if (!emailOk) valid = false;
+            setFieldError('rowPassword', 'errPassword', password.length < 8); if (password.length < 8) valid = false;
+            setFieldError('rowConfirm', 'errConfirm', password !== confirm); if (password !== confirm) valid = false;
+
+            if (!valid) return;
+
+            const btn = document.getElementById('btnSignup');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            const refCode = document.getElementById('refInput').value.trim() || null;
+
+            try {
+                if (!window.__signup) throw new Error('Firebase not loaded. Please refresh.');
+                await window.__signup(email, password, fullname, country, refCode);
+                document.getElementById('signupForm').style.display = 'none';
+                document.getElementById('successOverlay').classList.add('show');
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            } catch (err) {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                const map = {
+                    'auth/email-already-in-use': 'An account with this email already exists.',
+                    'auth/invalid-email': 'Please enter a valid email address.',
+                    'auth/weak-password': 'Password must be at least 8 characters.',
+                    'auth/network-request-failed': 'Network error. Check your connection.',
+                    'auth/too-many-requests': 'Too many attempts. Please try again later.'
+                };
+                alertEl.textContent = map[err.code] || err.message || 'Signup failed. Please try again.';
+                alertEl.classList.add('show');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleSignup();
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => { });
+            });
+        }
+    </script>
+</body>
+
+</html>

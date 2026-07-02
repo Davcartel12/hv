@@ -1,0 +1,433 @@
+<input type="hidden" id="proid" value="0" />
+    <input type="hidden" id="techannel" value="https://t.me/KO_Support" />
+    <input type="hidden" id="telgroup" value="https://t.me/KO_Support" />
+
+    <!-- Overlay backdrop -->
+    <div class="indexdiv"></div>
+
+    <!-- MODAL 1: PLATFORM DESCRIPTION NOTICE -->
+    <div class="modal-wrap" id="noctie">
+        <div class="modal-card">
+            <h3 class="modal-title" style="color: var(--red2);">Platform Notice</h3>
+            <div style="max-height: 240px; overflow-y: auto; margin-bottom: 20px; padding-right: 4px;" id="notice_info">
+                Loading description...
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="modal-btn primary" id="Confirm1"
+                    style="background: linear-gradient(135deg, #0088cc, #0077b5); box-shadow: 0 4px 12px rgba(0,136,204,0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Telegram Support Channel
+                </button>
+                <button class="modal-btn secondary" id="close">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: BUY CONFIRMATION -->
+    <div class="modal-wrap" id="showinfo">
+        <div class="modal-card">
+            <h3 class="modal-title" id="pname">Confirm Investment</h3>
+            <p class="modal-desc">Your yield gains will accrue automatically and be added to your balance every 24
+                hours.</p>
+            <div class="modal-body-info">
+                <img src="" id="imgurlss" alt="Product Image" />
+                <div class="modal-metrics">
+                    <div>Price: <strong id="price" style="color: var(--text);"></strong></div>
+                    <div>Daily Profit: <strong id="hour_income" style="color: var(--green);"></strong></div>
+                    <div>Total Profit: <strong id="total_income" style="color: var(--text);"></strong></div>
+                    <div>Validity: <strong id="dayss" style="color: var(--gold);"></strong> days</div>
+                </div>
+            </div>
+            <div class="modal-footer-btns">
+                <button class="modal-btn secondary" id="qx1">Cancel</button>
+                <button class="modal-btn primary" id="Confirm2">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SUCCESS CONFIRMATION -->
+    <div class="modal-wrap" id="showinfo1">
+        <div class="modal-card">
+            <div style="font-size: 40px; text-align: center; margin-bottom: 12px;">🎉</div>
+            <h3 class="modal-title" style="color: var(--green);">Order Placed!</h3>
+            <p class="modal-desc">You have successfully purchased this package. Your daily dividends will start
+                generating within 24 hours.</p>
+            <button class="modal-btn success" id="Confirm3" style="width: 100%;">View My Portfolio</button>
+        </div>
+    </div>
+
+    <!-- MODAL 4: INSUFFICIENT BALANCE -->
+    <div class="modal-wrap" id="insufficient_modal">
+        <div class="modal-card">
+            <div style="font-size: 40px; text-align: center; margin-bottom: 12px;">⚠️</div>
+            <h3 class="modal-title" style="color: var(--red2);">Insufficient Funds</h3>
+            <p class="modal-desc" id="insufficient_desc"></p>
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 15px;">
+                <button class="modal-btn primary" id="ConfirmDeposit" style="width: 100%;">Go to Deposit</button>
+                <button class="modal-btn secondary" id="closeInsufficient" style="width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    
+
+    
+
+    
+
+    <!-- HERO CAROUSEL -->
+    <div class="hero">
+        <div class="hero-slider">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/85f2bede-046e-419a-9d1e-648da27c2fbf.jpg"
+                alt="Slide 1">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/f5144171-4838-48bf-81eb-1708958c4540.jpg"
+                alt="Slide 2">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/874a5f1d-8f00-4b75-8815-d57543d85330.jpg"
+                alt="Slide 3">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/f0c23847-b9c3-471b-83cc-ba91854db07a.jpg"
+                alt="Slide 4">
+            <img src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/85f2bede-046e-419a-9d1e-648da27c2fbf.jpg"
+                alt="Slide 1 Dup">
+        </div>
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-label">NYSE: KO · S&amp;P 500</div>
+            <div class="hero-title">Invest in a<br><span>Century</span> of Returns</div>
+            <button class="hero-cta" onclick="document.getElementById('list').scrollIntoView({ behavior: 'smooth' });">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                Start Investing
+            </button>
+        </div>
+    </div>
+
+
+    <!-- CATEGORY FILTER PILLS -->
+    <div class="cats">
+        <button class="cat active" data-cat="all">All</button>
+        <button class="cat" data-cat="stocks">Stocks</button>
+        <button class="cat" data-cat="dividend">Dividend</button>
+        <button class="cat" data-cat="etf">ETFs</button>
+        <button class="cat" data-cat="bonds">Bonds</button>
+        <button class="cat" data-cat="reports">Reports</button>
+    </div>
+
+    <!-- MAIN PRODUCT LIST -->
+    <div class="section-label">
+        <h2>Investment Opportunities</h2>
+    </div>
+    <div class="grid-wrap">
+        <div class="buy-grid" id="list">
+            <!-- Loaded dynamically -->
+        </div>
+        <div class="no-results" id="noResults">No opportunities found.</div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    
+
+    <!-- Firebase Configuration & Auth Handler -->
+    
+
+    <!-- Page Logic -->
+<script>
+window.__pageInit['index'] = function() {
+const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+const db = window.__fb.db; const auth = window.__fb.auth;
+
+        window.firebaseDB = db;
+        window.firebaseAuth = auth;
+
+        async function __auth_main(){ const user = window.currentUser;
+            if (!user) {
+                window.location.href = 'signin.html';
+                return;
+            }
+            window.firebaseUser = user;
+            window.dispatchEvent(new Event('firebase-auth-ready'));
+        }
+
+        // Global functions for user profile data and package purchase
+        window.koGetUserInfo = async () => {
+            const user = auth.currentUser;
+            if (!user) return null;
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                return snap.exists() ? snap.data() : null;
+            } catch (e) {
+                console.error("Error loading user profile:", e);
+                return null;
+            }
+        };
+
+        window.koPurchasePackage = async (pkg) => {
+            const user = auth.currentUser;
+            if (!user) {
+                return { success: false, reason: 'signin' };
+            }
+            try {
+                const price = pkg.price;
+                const userRef = doc(db, 'users', user.uid);
+                const snap = await getDoc(userRef);
+                const d = snap.data();
+                const currentBalance = d.balance || 0;
+                if (currentBalance < price) {
+                    return { success: false, reason: 'insufficient', balance: currentBalance };
+                }
+                await updateDoc(userRef, {
+                    balance: increment(-price),
+                    invested: increment(price),
+                    investments: arrayUnion({
+                        id: Math.random().toString(36).substring(2, 15),
+                        pkgId: pkg.id,
+                        name: pkg.name,
+                        price: pkg.price,
+                        ret: pkg.ret,
+                        days: pkg.days,
+                        cat: pkg.cat,
+                        imgurl: pkg.img || '',
+                        createdAt: Date.now(),
+                        earned: 0
+                    })
+                });
+                return { success: true };
+            } catch (e) {
+                console.error('Purchase error:', e);
+                return { success: false, reason: 'error' };
+            }
+        };
+    
+try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[index] auth_main', e); }
+
+/* ---- page UI script(s) ---- */
+try {
+
+        (function () {
+            const tickerData = [
+                { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
+                { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
+                { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
+                { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
+                { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
+                { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
+                { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
+                { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
+            ];
+            const inner = document.getElementById('tickerInner');
+            const build = () => tickerData.map(d =>
+                `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
+            ).join('');
+            inner.innerHTML = build() + build();
+        })();
+    
+
+
+        const CURRENCY = '$';
+
+        const PACKAGES = [
+            { id: 'classic-share', cat: 'stocks', img: '1coke.png', name: 'Classic Share Pack', price: 10, ret: 300, days: 120, roi: 3000, desc: 'Entry-level direct KO stock ownership.' },
+            { id: 'gold-cap', cat: 'dividend', img: '2coke.png', name: 'Gold Cap Pack', price: 15, ret: 450, days: 120, roi: 3000, desc: 'Premium dividend reinvestment plan.' },
+            { id: 'secret-recipe', cat: 'dividend', img: '4coke.png', name: 'Secret Recipe Yield', price: 25, ret: 750, days: 120, roi: 3000, desc: 'Compounding dividend strategy.' },
+            { id: 'zero-sugar', cat: 'stocks', img: '9coke.png', name: 'Zero Sugar Momentum', price: 40, ret: 1200, days: 120, roi: 3000, desc: 'Ride the wave of KO\'s fastest growing product.' },
+            { id: 'heritage-vault', cat: 'bonds', img: '3coke.png', name: 'Heritage Vault Pack', price: 60, ret: 1800, days: 120, roi: 3000, desc: 'Secured bond-backed package.' },
+            { id: 'insider-growth', cat: 'reports', img: '8coke.png', name: 'Insider Growth Report', price: 150, ret: 4500, days: 120, roi: 3000, desc: 'Research-backed insight package.' },
+            { id: 'global-beverage', cat: 'etf', img: '5coke.png', name: 'Global Beverage ETF', price: 250, ret: 7800, days: 120, roi: 3120, desc: 'Diversified exposure across 40+ brands.' },
+            { id: 'atlanta-founders', cat: 'etf', img: '6coke.png', name: 'Atlanta Founders Fund', price: 500, ret: 7200, days: 120, roi: 1440, desc: 'Exclusive founders-tier ETF.' },
+            { id: 'centennial-bond', cat: 'bonds', img: '7coke.png', name: 'Centennial Corp Bond', price: 1000, ret: 45000, days: 150, roi: 4500, desc: 'Long-term corporate bond strategy.' }
+        ];
+
+
+        (() => {
+            onloads();
+        })();
+
+        window.addEventListener('firebase-auth-ready', () => {
+            getuserinfo();
+        });
+
+        function onloads() {
+            getcsinfo();
+            Textgpt();
+            getuserinfo();
+            plist();
+        }
+
+        async function getuserinfo() {
+            if (window.koGetUserInfo) {
+                const data = await window.koGetUserInfo();
+                // If we need to render balance elements in future, we can do it here.
+            }
+        }
+
+
+        function getcsinfo() {
+            // CS config
+        }
+
+        function Textgpt() {
+            if (sessionStorage.getItem('ko_notice_seen')) return;
+            const desc = "Welcome to the Coca-Cola Investor Hub! Accrue secure daily yields backed by corporate KO assets. Open any package to start earning dividends now.";
+            document.getElementById('notice_info').textContent = desc;
+            document.querySelector('.indexdiv').style.display = 'block';
+            document.getElementById('noctie').style.display = 'block';
+            sessionStorage.setItem('ko_notice_seen', 'true');
+        }
+
+        function plist() {
+            let html = "";
+            const sorted = [...PACKAGES].sort((a, b) => a.price - b.price);
+
+            sorted.forEach((pkg, index) => {
+                const vipTier = `VIP${index + 1}`;
+                const daily = pkg.days ? (pkg.ret / pkg.days).toFixed(2) : "0.00";
+
+                html += `
+                <div class="buy" onclick="openBuyModal('${pkg.id}', '${vipTier}')" data-cat="${pkg.cat}" data-title="${pkg.name.toLowerCase()} ${vipTier.toLowerCase()}">
+                    
+                    <!-- 1. VIP Name -->
+                    <div style="font-size: 13px; font-weight: bold; width: 100%; text-align: center; line-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); margin-bottom: 8px;">
+                        ${vipTier}
+                    </div>
+                    
+                    <!-- 2. Product Image -->
+                    <div style="width: 80%; height: 80px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 8px; margin: 0 auto 10px; padding: 4px; flex-shrink: 0;">
+                        <img src="${pkg.img}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    </div>
+                    
+                    <!-- 3. Daily Income -->
+                    <div style="font-size: 11px; width: 100%; text-align: left; line-height: 18px; color: var(--muted); margin-top: 4px;">
+                        Daily income: <span style="color: var(--red2); font-weight: bold;">${CURRENCY}${daily}</span>
+                    </div>
+                    
+                    <!-- 4. Total Income -->
+                    <div style="font-size: 11px; width: 100%; text-align: left; line-height: 18px; color: var(--muted);">
+                        Total income: <span style="color: var(--red2); font-weight: bold;">${CURRENCY}${pkg.ret}</span>
+                    </div>
+                    
+                    <!-- 5. Price -->
+                    <div style="text-align: left; width: 100%; margin-top: 8px;">
+                        <span style="font-weight: bold; font-size: 14px; color: var(--text);">${CURRENCY}${pkg.price}</span>
+                    </div>
+                    
+                    <!-- 6. Buy Button -->
+                    <div style="position: absolute; bottom: 10px; right: 10px;">
+                        <div style="height: 22px; width: 56px; line-height: 22px; font-size: 11px; color: #fff; border-radius: 6px; background: var(--red); font-weight: bold; text-align: center;">
+                            Buy
+                        </div>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('list').innerHTML = html;
+        }
+
+        // Overlay Close Event Handlers
+        document.getElementById('close').addEventListener('click', closeModal);
+        document.getElementById('qx1').addEventListener('click', closeModal);
+
+        function closeModal() {
+            document.querySelector('.indexdiv').style.display = 'none';
+            document.getElementById('noctie').style.display = 'none';
+            document.getElementById('showinfo').style.display = 'none';
+            document.getElementById('showinfo1').style.display = 'none';
+            document.getElementById('insufficient_modal').style.display = 'none';
+        }
+
+
+        // Contact buttons within modal
+        document.getElementById('Confirm1').addEventListener('click', () => {
+            window.open('https://t.me/KO_Support', '_blank');
+        });
+
+
+        // Category Filter
+        const catBtns = document.querySelectorAll('.cat');
+        catBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                catBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.cat;
+                const tiles = document.querySelectorAll('.buy');
+                let visible = 0;
+                tiles.forEach(t => {
+                    const show = (cat === 'all' || t.dataset.cat === cat);
+                    t.classList.toggle('hidden', !show);
+                    if (show) visible++;
+                });
+                const nr = document.getElementById('noResults');
+                if (nr) nr.classList.toggle('show', visible === 0);
+            });
+        });
+
+        // Package Buy Interaction
+        window.openBuyModal = (pkgId, vipTier) => {
+            const pkg = PACKAGES.find(p => p.id === pkgId);
+            if (!pkg) return;
+            window._currentPkg = pkg;
+
+            const daily = pkg.days ? (pkg.ret / pkg.days).toFixed(2) : "0.00";
+            document.getElementById('pname').textContent = vipTier + " - " + pkg.name;
+            document.getElementById('imgurlss').src = pkg.img;
+            document.getElementById('price').textContent = `${CURRENCY}${pkg.price}`;
+            document.getElementById('hour_income').textContent = `${CURRENCY}${daily}/day`;
+            document.getElementById('total_income').textContent = `${CURRENCY}${pkg.ret}`;
+            document.getElementById('dayss').textContent = pkg.days;
+
+            document.querySelector('.indexdiv').style.display = 'block';
+            document.getElementById('showinfo').style.display = 'block';
+        };
+
+        // Confirm Buy Button
+        document.getElementById('Confirm2').addEventListener('click', async () => {
+            const pkg = window._currentPkg;
+            if (!pkg) return;
+
+            const btn = document.getElementById('Confirm2');
+            const originalText = btn.textContent;
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            if (window.koPurchasePackage) {
+                const result = await window.koPurchasePackage(pkg);
+                btn.textContent = originalText;
+                btn.disabled = false;
+
+                if (result.success) {
+                    document.getElementById('showinfo').style.display = 'none';
+                    document.getElementById('showinfo1').style.display = 'block';
+                } else if (result.reason === 'insufficient') {
+                    document.getElementById('showinfo').style.display = 'none';
+                    document.getElementById('insufficient_desc').innerHTML = `This package costs <strong>$${pkg.price}</strong>, but your current balance is only <strong>$${Number(result.balance || 0).toFixed(2)}</strong>. Please top up your account to continue.`;
+                    document.getElementById('insufficient_modal').style.display = 'block';
+                } else if (result.reason === 'signin') {
+                    alert('Please sign in first.');
+                } else {
+                    alert('Failed to process purchase. Try again.');
+                }
+            } else {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                alert('Connection error. Please refresh and try again.');
+            }
+        });
+
+        // Insufficient Modal Buttons
+        document.getElementById('closeInsufficient').addEventListener('click', closeModal);
+        document.getElementById('ConfirmDeposit').addEventListener('click', () => {
+            window.location.href = '#/deposit';
+        });
+
+        // View portfolio button (Success Modal redirect)
+        document.getElementById('Confirm3').addEventListener('click', () => {
+            window.location.href = '#/income';
+        });
+    
+} catch(e){ console.error('[index] ui', e); }
+};
+</script>

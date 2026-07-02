@@ -1,0 +1,227 @@
+<!-- Page Content -->
+    <div class="page-wrap">
+
+        <!-- Stat buttons -->
+        <div class="stat-row">
+            <button class="stat-btn">
+                <span class="stat-btn-label">Number of products</span>
+                <span class="stat-btn-val" id="number1">0</span>
+            </button>
+            <button class="stat-btn">
+                <span class="stat-btn-label">My income</span>
+                <span class="stat-btn-val" id="number2">$0.00</span>
+            </button>
+        </div>
+
+        <!-- Investment list -->
+        <div class="list-wrap" id="list">
+            <div class="spinner"></div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Nav -->
+    
+
+    <!-- Ticker Script -->
+    
+
+    <!-- Firebase Logic -->
+    
+
+    <!-- PWA Service Worker -->
+<script>
+window.__pageInit['income'] = function() {
+const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+const db = window.__fb.db; const auth = window.__fb.auth;
+
+        /* ── Helpers ── */
+        const fmt2 = n => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtDate = d => new Date(d).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        /* ── Render investments as list cards ── */
+        function renderInvestments(invs, balance, invested, earnings) {
+            const container = document.getElementById('list');
+
+            if (!invs || invs.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    You haven't purchased any products yet.<br>
+                    <a href="#/">Browse packages →</a>
+                </div>`;
+                return;
+            }
+
+            let totalDailyIncome = 0;
+
+            const html = invs.map(inv => {
+                const now = new Date();
+                const created = new Date(inv.createdAt || now);
+                const daysPassed = (now - created) / (1000 * 60 * 60 * 24);
+
+                let progressPct = 100;
+                let daysLeftStr = '';
+                let validityStr = inv.days ? `${inv.days} days` : 'Flexible';
+
+                if (inv.matured) {
+                    daysLeftStr = 'Matured & Credited';
+                    progressPct = 100;
+                } else if (inv.days) {
+                    const daysLeft = Math.max(0, inv.days - daysPassed);
+                    daysLeftStr = `${Math.ceil(daysLeft)} days remaining`;
+                    progressPct = Math.min(100, (daysPassed / inv.days) * 100);
+                }
+
+                const earned = inv.earned || 0;
+                const dailyProfit = (inv.days && inv.ret)
+                    ? inv.ret / inv.days
+                    : 0;
+                totalDailyIncome += dailyProfit;
+
+                const purchaseDate = inv.createdAt
+                    ? fmtDate(typeof inv.createdAt === 'number' ? inv.createdAt : inv.createdAt.toDate?.() || inv.createdAt)
+                    : '—';
+
+                const pkgImgMap = {
+                    'classic-share': '1coke.png',
+                    'gold-cap': '2coke.png',
+                    'heritage-vault': '3coke.png',
+                    'secret-recipe': '4coke.png',
+                    'global-beverage': '5coke.png',
+                    'atlanta-founders': '6coke.png',
+                    'centennial-bond': '7coke.png',
+                    'insider-growth': '8coke.png',
+                    'zero-sugar': '9coke.png'
+                };
+                const img = inv.imgurl || pkgImgMap[inv.pkgId] || '';
+                const thumbStyle = img
+                    ? `background-image:url(${img})`
+                    : 'background: linear-gradient(135deg, var(--red), #8b0010)';
+
+                const maturedBadge = inv.matured
+                    ? `<span class="matured-badge">✓ Matured</span>`
+                    : '';
+
+                return `
+                <div class="inv-card">
+                    <div class="inv-thumb" style="${thumbStyle}"></div>
+                    <div class="inv-body">
+                        <div class="inv-name">${inv.name || 'Investment'} ${maturedBadge}</div>
+                        <div class="inv-row">Daily income: <span class="val">$${fmt2(dailyProfit)}</span></div>
+                        <div class="inv-row">Total income: <span class="val">$${fmt2(earned)}</span></div>
+                        <div class="inv-row">Validity period: <span class="val">${validityStr}</span></div>
+                        <div class="inv-row">Purchase time: ${purchaseDate}</div>
+                        <div class="inv-progress-wrap">
+                            <div class="inv-progress-bar" style="width:${progressPct}%"></div>
+                        </div>
+                        ${daysLeftStr ? `<div class="inv-row" style="margin-top:3px;font-size:10px;">${daysLeftStr}</div>` : ''}
+                    </div>
+                    <div class="inv-price">$${fmt2(inv.price)}</div>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = html;
+
+            // Update daily income banner
+            document.getElementById('number0').textContent = '$' + fmt2(totalDailyIncome);
+        }
+
+        /* ── Auth & Data ── */
+        async function __auth_main(){ const user = window.currentUser;
+            if (!user) { window.location.href = 'signin.html'; return; }
+
+            try {
+                const userSnap = await getDoc(doc(db, 'users', user.uid));
+                if (!userSnap.exists()) return;
+
+                const d = userSnap.data();
+                const balance = d.balance || 0;
+                const earnings = d.earnings || 0;
+                const invested = d.invested || 0;
+
+                // ---- Stat numbers ----
+                let invs = d.investments || [];
+
+                document.getElementById('number1').textContent = invs.filter(i => !i.matured).length;
+
+                // ---- Maturity check & accrual ----
+                let needsUpdate = false;
+                let updatedBalance = balance;
+                let updatedInvested = invested;
+
+                invs.forEach(inv => {
+                    if (inv.matured) return;
+                    const now = new Date();
+                    const created = new Date(inv.createdAt || now);
+                    const daysPassed = (now - created) / (1000 * 60 * 60 * 24);
+
+                    if (inv.days && inv.ret) {
+                        const dailyProfit = inv.ret / inv.days;
+                        const wholeDays = Math.floor(daysPassed);
+                        const effectiveDays = Math.min(inv.days, Math.max(0, wholeDays));
+                        inv.earned = effectiveDays * dailyProfit;
+
+                        if (daysPassed >= inv.days) {
+                            inv.matured = true;
+                            inv.earned = inv.ret;
+                            updatedBalance += inv.ret;
+                            needsUpdate = true;
+                        }
+                    }
+                });
+
+                // Calculate total profit made from investments
+                const totalProfitMade = invs.reduce((sum, inv) => sum + (inv.earned || 0), 0);
+                document.getElementById('number2').textContent = '$' + fmt2(totalProfitMade);
+
+                if (needsUpdate) {
+                    updatedInvested = Math.max(0, updatedInvested);
+                    updateDoc(doc(db, 'users', user.uid), {
+                        balance: updatedBalance,
+                        invested: updatedInvested,
+                        investments: invs
+                    }).catch(console.error);
+                }
+
+                invs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                renderInvestments(invs, balance, invested, earnings);
+
+            } catch (e) { console.error('Income load error:', e); }
+
+            window.koSignOut = () => window.__fb.signOut(window.__fb.auth).then(() => window.location.href = 'signin.html');
+        }
+    
+try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[income] auth_main', e); }
+
+/* ---- page UI script(s) ---- */
+try {
+
+        const tickerData = [
+            { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
+            { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
+            { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
+            { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
+            { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
+            { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
+            { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
+            { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
+        ];
+        const inner = document.getElementById('tickerInner');
+        const buildItems = () => tickerData.map(d =>
+            `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
+        ).join('');
+        inner.innerHTML = buildItems() + buildItems();
+    
+
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    
+} catch(e){ console.error('[income] ui', e); }
+};
+</script>
