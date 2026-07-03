@@ -1,49 +1,49 @@
 <!-- TOP BAR -->
-    
 
-    <!-- LIVE TICKER -->
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <button class="back-btn" onclick="window.location.href='#/support'">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
-            </button>
-            <div class="ch-info">
-                <div class="ch-title">Live Chat</div>
-                <div class="ch-sub">Support Team (Online)</div>
-            </div>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="no-chat">Loading chat history...</div>
-        </div>
-        <div class="chat-input-row">
-            <input type="text" id="chatInput" placeholder="Type your message..."
-                onkeydown="if(event.key==='Enter')sendMessage()">
-            <button class="send-btn" onclick="sendMessage()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-            </button>
+<!-- LIVE TICKER -->
+
+<div class="chat-container">
+    <div class="chat-header">
+        <button class="back-btn" onclick="window.location.hash='#/support'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <div class="ch-info">
+            <div class="ch-title">Live Chat</div>
+            <div class="ch-sub">Support Team (Online)</div>
         </div>
     </div>
-    
+    <div class="chat-messages" id="chatMessages">
+        <div class="no-chat">Loading chat history...</div>
+    </div>
+    <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Type your message..."
+            onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </div>
+</div>
 
-    
 
-    <!-- SECURITY SCRIPT -->
 
-    <!-- Firebase Auth Guard & Chat Logic -->
-    
 
-    <!-- PWA Service Worker Registration -->
+<!-- SECURITY SCRIPT -->
+
+<!-- Firebase Auth Guard & Chat Logic -->
+
+
+<!-- PWA Service Worker Registration -->
 <script>
-window.__pageInit['chat'] = function() {
-const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
-const db = window.__fb.db; const auth = window.__fb.auth;
+    window.__pageInit['chat'] = function () {
+        const { doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, increment, arrayUnion, arrayRemove } = window.__fb;
+        const db = window.__fb.db; const auth = window.__fb.auth;
 
         let currentUser = null;
         let userData = null;
@@ -53,7 +53,8 @@ const db = window.__fb.db; const auth = window.__fb.auth;
         const chatInputEl = document.getElementById('chatInput');
         if (sendBtn) sendBtn.disabled = true;
 
-        async function __auth_main(){ const user = window.currentUser;
+        async function __auth_main() {
+            const user = window.currentUser;
             if (!user) { window.location.href = 'signin.html'; return; }
             currentUser = user;
 
@@ -133,51 +134,54 @@ const db = window.__fb.db; const auth = window.__fb.auth;
                 input.focus();
             }
         };
-    
-try { if (typeof __auth_main === 'function') __auth_main(); } catch(e){ console.error('[chat] auth_main', e); }
 
-/* ---- page UI script(s) ---- */
-try {
+        try { if (typeof __auth_main === 'function') __auth_main(); } catch (e) { console.error('[chat] auth_main', e); }
 
-        // ---- TICKER ----
-        const tickerData = [
-            { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
-            { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
-            { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
-            { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
-            { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
-            { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
-            { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
-            { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
-        ];
-        const inner = document.getElementById('tickerInner');
-        if (inner) {
-            const buildItems = () => tickerData.map(d =>
-                `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
-            ).join('');
-            inner.innerHTML = buildItems() + buildItems();
-        }
+        /* ---- page UI script(s) ---- */
+        try {
 
-        // ---- FAQ TOGGLE ----
-        const faqs = document.querySelectorAll('.faq-item');
-        faqs.forEach(faq => {
-            faq.querySelector('.faq-q').addEventListener('click', () => {
-                const isActive = faq.classList.contains('active');
-                faqs.forEach(f => f.classList.remove('active'));
-                if (!isActive) faq.classList.add('active');
-            });
-        });
-    
+            // ---- TICKER ----
+            const tickerData = [
+                { sym: 'KO', price: '$63.42', chg: '+1.24%', up: true },
+                { sym: 'PEP', price: '$168.30', chg: '+0.55%', up: true },
+                { sym: 'MNST', price: '$52.10', chg: '-0.32%', up: false },
+                { sym: 'XLP', price: '$79.10', chg: '+0.87%', up: true },
+                { sym: 'BRK.B', price: '$418.20', chg: '+1.10%', up: true },
+                { sym: 'KO DIV', price: '$0.485', chg: 'Q3 2025', up: true },
+                { sym: 'DJI', price: '42,340', chg: '+0.30%', up: true },
+                { sym: 'S&P500', price: '5,862', chg: '+0.48%', up: true },
+            ];
+            const inner = document.getElementById('tickerInner');
+            if (inner) {
+                const buildItems = () => tickerData.map(d =>
+                    `<span class="ticker-item"><strong>${d.sym}</strong> ${d.price} <span class="${d.up ? 't-up' : 't-dn'}">${d.chg}</span></span>`
+                ).join('');
+                inner.innerHTML = buildItems() + buildItems();
+            }
 
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
+            // ---- FAQ TOGGLE ----
+            const faqs = document.querySelectorAll('.faq-item');
+            faqs.forEach(faq => {
+                faq.querySelector('.faq-q').addEventListener('click', () => {
+                    const isActive = faq.classList.contains('active');
+                    faqs.forEach(f => f.classList.remove('active'));
+                    if (!isActive) faq.classList.add('active');
                 });
             });
-        }
-    
-} catch(e){ console.error('[chat] ui', e); }
-};
+
+
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('sw.js').catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+
+        } catch (e) { console.error('[chat] ui', e); }
+
+        /* ---- expose inline-handler fns to window (SPA) ---- */
+        if (typeof sendMessage === 'function') window.sendMessage = sendMessage;
+    };
 </script>

@@ -1,0 +1,2481 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KO -- Deposit & Withdrawal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://korablobstorage.blob.core.windows.net/modal-bucket/korapay-collections.min.js"></script>
+    <style>
+        :root {
+            --red: #e8001d;
+            --red2: #ff3d52;
+            --dark: #0a0a0b;
+            --surface: #111115;
+            --card: #18181e;
+            --border: rgba(255, 255, 255, 0.07);
+            --text: #f5f0eb;
+            --muted: rgba(245, 240, 235, 0.45);
+            --gold: #c8a96e;
+            --green: #3ddc84;
+            --blue: #1e90ff;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--dark);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 50% -5%, rgba(232, 0, 29, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 30% at 90% 95%, rgba(200, 169, 110, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 14px 20px;
+            background: rgba(10, 10, 11, 0.88);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ko-badge {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .ko-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .price-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1px;
+        }
+
+        .price-chip .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .price-chip .change {
+            font-size: 11px;
+            font-weight: 700;
+            color: #3ddc84;
+            letter-spacing: .5px;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title .label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--red2);
+            margin-bottom: 6px;
+        }
+
+        .page-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text);
+        }
+
+        .page-title h1 span {
+            color: var(--red);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1a0408 0%, #18181e 100%);
+            border: 1px solid rgba(232, 0, 29, 0.2);
+            border-radius: 20px;
+            padding: 22px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bal-left .bal-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .bal-left .bal-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .bal-left .bal-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .bal-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .bal-badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .bal-badge.green {
+            background: rgba(61, 220, 132, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(61, 220, 132, 0.2);
+        }
+
+        .bal-badge.gold {
+            background: rgba(200, 169, 110, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(200, 169, 110, 0.2);
+        }
+
+        .tab-row {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 20px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .tab-btn.active {
+            background: var(--red);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(232, 0, 29, 0.35);
+        }
+
+        .tab-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .limit-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .limit-card {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .limit-card .lc-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .limit-card .lc-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .limit-card .lc-sub {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .limit-card.green {
+            border-color: rgba(61, 220, 132, 0.15);
+        }
+
+        .limit-card.green .lc-val {
+            color: var(--green);
+        }
+
+        .limit-card.red {
+            border-color: rgba(232, 0, 29, 0.15);
+        }
+
+        .limit-card.red .lc-val {
+            color: var(--red2);
+        }
+
+        .crypto-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .crypto-tile {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+
+        .crypto-tile:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .crypto-tile.selected {
+            border-color: var(--red);
+            background: rgba(232, 0, 29, 0.08);
+            box-shadow: 0 0 0 3px rgba(232, 0, 29, 0.1);
+        }
+
+        .crypto-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            overflow: hidden;
+            padding: 5px;
+        }
+
+        .crypto-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .crypto-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .crypto-sym {
+            font-size: 10px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .address-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 18px;
+            display: none;
+        }
+
+        .address-box.show {
+            display: block;
+        }
+
+        .address-box .ab-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ab-label .network-badge {
+            background: rgba(30, 144, 255, 0.12);
+            color: var(--blue);
+            border: 1px solid rgba(30, 144, 255, 0.2);
+            border-radius: 6px;
+            font-size: 9px;
+            padding: 2px 7px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .qr-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .qr-wrap {
+            width: 72px;
+            height: 72px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 5px;
+            flex-shrink: 0;
+        }
+
+        .qr-wrap svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .addr-text {
+            font-size: 12px;
+            color: var(--text);
+            word-break: break-all;
+            line-height: 1.6;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all .2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+        }
+
+        .copy-btn.copied {
+            color: var(--green);
+            border-color: rgba(61, 220, 132, 0.3);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .address-warning {
+            margin-top: 10px;
+            background: rgba(200, 169, 110, 0.08);
+            border: 1px solid rgba(200, 169, 110, 0.2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 11px;
+            color: var(--gold);
+            line-height: 1.5;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .address-warning svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 7px;
+        }
+
+        .amount-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 14px;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .amount-wrap input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 14px 14px 30px;
+            color: var(--text);
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .amount-wrap input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(232, 0, 29, 0.12);
+        }
+
+        .amount-wrap input::placeholder {
+            color: rgba(245, 240, 235, 0.15);
+        }
+
+        .amount-wrap .crypto-equiv {
+            position: absolute;
+            right: 14px;
+            font-size: 12px;
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            pointer-events: none;
+        }
+
+        .quick-pills {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .pill:hover,
+        .pill.active {
+            background: rgba(232, 0, 29, 0.12);
+            border-color: var(--red);
+            color: var(--red2);
+        }
+
+        .field-error {
+            font-size: 11px;
+            color: var(--red2);
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field.has-error input {
+            border-color: var(--red2);
+        }
+
+        .field.has-error .field-error {
+            display: block;
+        }
+
+        .field-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 14px;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+            color: var(--muted);
+        }
+
+        .field-icon svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .field input.padded,
+        .field select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px 12px 42px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            appearance: none;
+        }
+
+        .field input.padded:focus,
+        .field select:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(232, 0, 29, 0.12);
+        }
+
+        .field input.padded::placeholder {
+            color: var(--muted);
+        }
+
+        .field select option {
+            background: #1a1a22;
+            color: var(--text);
+        }
+
+        .field select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(245,240,235,0.45)' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 38px;
+        }
+
+        .fee-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .fee-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .fee-line span:last-child {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .fee-line.total {
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+        }
+
+        .fee-line.total span {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .fee-line.total span:first-child {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--red);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(232, 0, 29, 0.35);
+            transition: transform .2s, box-shadow .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(232, 0, 29, 0.5);
+        }
+
+        .btn-submit .btn-text {
+            transition: opacity .2s;
+        }
+
+        .btn-submit .btn-spinner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        .btn-submit.loading .btn-text {
+            opacity: 0;
+        }
+
+        .btn-submit.loading .btn-spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--card);
+            border: 1px solid rgba(61, 220, 132, 0.3);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+            opacity: 0;
+            transition: all .3s;
+            z-index: 300;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            border-color: rgba(232, 0, 29, 0.3);
+            color: var(--red2);
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 11, 0.92);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            flex: 1;
+            max-width: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            transition: color .2s;
+            padding: 4px 0;
+        }
+
+        .nav-item.active {
+            color: var(--red);
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .nav-item .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--red);
+            opacity: 0;
+            margin-top: -2px;
+            transition: opacity .2s;
+        }
+
+        .nav-item.active .dot {
+            opacity: 1;
+        }
+
+        /* ── METHOD SELECTOR ── */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .method-tile {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+
+        .method-tile:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .method-tile.selected {
+            border-color: var(--red);
+            background: rgba(232, 0, 29, 0.05);
+            box-shadow: 0 0 0 3px rgba(232, 0, 29, 0.12);
+        }
+
+        .method-tile img,
+        .method-tile svg {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            transition: all 0.25s ease;
+        }
+
+        .method-tile svg {
+            color: var(--muted);
+        }
+
+        .method-tile:hover img,
+        .method-tile:hover svg {
+            transform: scale(1.08);
+        }
+
+        .method-tile.selected img {
+            filter: drop-shadow(0 0 10px rgba(232, 0, 29, 0.35));
+            transform: scale(1.08);
+        }
+
+        .method-tile.selected svg {
+            color: #3ddc84;
+            filter: drop-shadow(0 0 10px rgba(61, 220, 132, 0.4));
+            transform: scale(1.08);
+        }
+
+        .method-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .method-desc {
+            font-size: 10px;
+            color: var(--muted);
+            line-height: 1.4;
+
+            /* Selection screen styles */
+            .custom-select-option:hover {
+                background: rgba(255, 255, 255, 0.05) !important;
+            }
+
+            .selection-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-top: 10px;
+            }
+
+            .option-card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 24px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .option-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, rgba(232, 0, 29, 0.05) 0%, transparent 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .option-card:hover::before {
+                opacity: 1;
+            }
+
+            .option-card:hover {
+                border-color: rgba(232, 0, 29, 0.35);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 30px rgba(232, 0, 29, 0.15);
+            }
+
+            .option-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 4px;
+                transition: transform 0.3s ease;
+            }
+
+            .option-card:hover .option-icon {
+                transform: scale(1.1);
+            }
+
+            .option-icon.green {
+                background: rgba(61, 220, 132, 0.1);
+                color: var(--green);
+                border: 1px solid rgba(61, 220, 132, 0.15);
+            }
+
+            .option-icon.red {
+                background: rgba(232, 0, 29, 0.1);
+                color: var(--red2);
+                border: 1px solid rgba(232, 0, 29, 0.15);
+            }
+
+            .option-card h3 {
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+            }
+
+            .option-card p {
+                font-size: 13px;
+                color: var(--muted);
+                line-height: 1.5;
+                max-width: 280px;
+            }
+    </style>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e8001d" />
+    <link rel="apple-touch-icon" href="og.png" />
+</head>
+
+<body>
+    <div id="appLoader"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d0d12;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 0.4s ease;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:15px;">
+            <div
+                style="width:40px;height:40px;border:3px solid rgba(232,0,29,0.2);border-top-color:var(--red);border-radius:50%;animation:spin 1s linear infinite;">
+            </div>
+            <div style="color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;">Loading...</div>
+        </div>
+    </div>
+    <div class="bg-glow"></div>
+
+    <header class="topbar">
+        <div class="ko-badge"><img
+                src="https://i.supaimg.com/9c071b4e-8fce-4cc8-8cbb-4938f2f2c851/3065cc9c-d7b6-410c-903a-e3dc00d2d018.png"
+                alt="Logo"></div>
+        <div class="price-chip">
+            <span class="price">$63.42</span>
+            <span class="change">▲ +1.24%</span>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="page-title">
+            <div class="label">Finance</div>
+            <h1 id="pageTitle">Deposit &amp; <span>Withdraw</span></h1>
+        </div>
+
+        <!-- Hidden Available Balance to keep Firestore logic compatible -->
+        <span id="balAmount" style="display:none;"></span>
+
+        <!-- Option Selector Screen -->
+        <div id="selectionPanel" class="selection-grid">
+            <div class="option-card" onclick="selectFlow('deposit')">
+                <div class="option-icon green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="19 12 12 19 5 12" />
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                    </svg>
+                </div>
+                <h3>Deposit Funds</h3>
+                <p>Deposit crypto or bank transfer to fund your products.</p>
+            </div>
+            <div class="option-card" onclick="selectFlow('withdraw')">
+                <div class="option-icon red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="5 12 12 5 19 12" />
+                        <line x1="12" y1="19" x2="12" y2="5" />
+                    </svg>
+                </div>
+                <h3>Withdraw Profits</h3>
+                <p>Withdraw your accrued profit directly to your wallet.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Tab row hidden — users enter directly via Recharge/Withdraw buttons -->
+
+        <!-- ══════════ DEPOSIT ══════════ -->
+        <div class="section active" id="depositSection">
+
+            <!-- STEP 1: Choose method -->
+            <div id="methodGrid">
+                <div class="crypto-label">Select Deposit Method</div>
+                <div class="method-grid">
+                    <div class="method-tile" id="methodCrypto" onclick="selectMethod('crypto')">
+                        <img src="crypto.png" alt="Crypto">
+                        <div class="method-title">Crypto Payment</div>
+                        <div class="method-desc">Instant confirmation via BTC, USDT, etc.</div>
+                    </div>
+                    <div class="method-tile" id="methodBank" onclick="selectMethod('bank')">
+                        <img src="bank.png" alt="Bank">
+                        <div class="method-title">Bank Transfer</div>
+                        <div class="method-desc">Direct bank transfer. Takes 1-2 hours.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2a: Crypto coin picker -->
+            <div id="depCoinPickerArea" style="display:none;">
+                <div style="margin-bottom:14px;">
+                    <a href="javascript:void(0)" onclick="showDepStep('method')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Method
+                    </a>
+                </div>
+                <div class="crypto-label">Select Currency</div>
+                <div class="crypto-grid" id="depCryptoGrid">
+                    <div class="crypto-tile" data-coin="BTC" data-addr="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(247,147,26,0.15);"><img
+                                src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC"></div>
+                        <div class="crypto-name">Bitcoin</div>
+                        <div class="crypto-sym">BTC</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="USDT" data-addr="TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(38,161,123,0.15);"><img
+                                src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT"></div>
+                        <div class="crypto-name">Tether</div>
+                        <div class="crypto-sym">USDT TRC20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="TRX" data-addr="TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(235,0,27,0.12);"><img
+                                src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX"></div>
+                        <div class="crypto-name">TRON</div>
+                        <div class="crypto-sym">TRX</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="ETH" data-addr="0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(98,126,234,0.15);"><img
+                                src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH"></div>
+                        <div class="crypto-name">Ethereum</div>
+                        <div class="crypto-sym">ETH ERC20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="BNB" data-addr="bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(240,185,11,0.15);"><img
+                                src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="BNB"></div>
+                        <div class="crypto-name">BNB</div>
+                        <div class="crypto-sym">BEP20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="SOL" data-addr="HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(153,69,255,0.15);"><img
+                                src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL"></div>
+                        <div class="crypto-name">Solana</div>
+                        <div class="crypto-sym">SOL</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="LTC" data-addr="LX2LMYXtuv5JpToEmtivkBuzk27Rp5RSMm"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(191,191,191,0.12);"><img
+                                src="https://cryptologos.cc/logos/litecoin-ltc-logo.png" alt="LTC"></div>
+                        <div class="crypto-name">Litecoin</div>
+                        <div class="crypto-sym">LTC</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="DOGE" data-addr="DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L"
+                        onclick="selectCoin(this,'dep')">
+                        <div class="crypto-icon" style="background:rgba(195,163,39,0.15);"><img
+                                src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" alt="DOGE"></div>
+                        <div class="crypto-name">Dogecoin</div>
+                        <div class="crypto-sym">DOGE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Crypto address box (shown after coin selected) -->
+            <div id="depAddressBox" style="display:none;">
+                <div style="margin-bottom:14px;">
+                    <a href="javascript:void(0)" onclick="showDepStep('coin')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Coin
+                    </a>
+                </div>
+                <div class="address-box show">
+                    <div class="ab-label">
+                        <img id="depCoinLogo" src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="logo"
+                            style="width:18px;height:18px;object-fit:contain;margin-bottom:2px;">
+                        Send to this address
+                        <span class="network-badge" id="depNetworkBadge">BTC</span>
+                    </div>
+                    <div class="qr-col"
+                        style="display:flex; flex-direction:column; align-items:center; gap:14px; margin-bottom:16px;">
+                        <img id="depQrImage" src="" alt="QR Code" onerror="this.style.display='none'"
+                            style="width:150px;height:150px;object-fit:contain;display:none;border-radius:10px;background:#fff;padding:5px;">
+                        <div class="addr-text" id="depAddress" style="text-align:center;">...</div>
+                    </div>
+                    <button class="copy-btn" id="depCopyBtn" onclick="copyAddress()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                        Copy Address
+                    </button>
+                    <div class="address-warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                        Send only <strong id="warnCoin">BTC</strong> to this address. Sending any other coin will result
+                        in
+                        permanent loss of funds.
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="depAmountSection" style="display:none;">
+                <div style="margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;">
+                    <a id="depAmountBackBtn" href="javascript:void(0)" onclick="showDepStep('coin')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Coin
+                    </a>
+                    <span id="depSelectedCoinIndicator"
+                        style="font-size:11px; color:var(--text); font-weight:700; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; display:flex; align-items:center; gap:6px;">
+                        BTC
+                    </span>
+                </div>
+
+                <div class="field" id="dep-field-amount">
+                    <label>Amount (USD)</label>
+                    <div class="amount-wrap">
+                        <span class="currency-prefix">$</span>
+                        <input type="number" id="depAmount" placeholder="0.00" min="10" max="1000"
+                            oninput="updateDepFee()">
+                        <span class="crypto-equiv" id="depEquiv"></span>
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:10px;">Enter an amount
+                        from <strong style="color:var(--text);">$10</strong> to <strong
+                            style="color:var(--text);">$1,000</strong></div>
+                    <div class="quick-pills">
+                        <span class="pill" onclick="setAmount('dep',10)">$10</span>
+                        <span class="pill" onclick="setAmount('dep',50)">$50</span>
+                        <span class="pill" onclick="setAmount('dep',100)">$100</span>
+                        <span class="pill" onclick="setAmount('dep',500)">$500</span>
+                        <span class="pill" onclick="setAmount('dep',1000)">$1K</span>
+                    </div>
+                    <div class="field-error" id="depAmountErr">Amount must be between $10 and $1,000.</div>
+                </div>
+
+
+
+                <button class="btn-submit" id="btnDeposit" onclick="submitDeposit()">
+                    <span class="btn-text">Confirm Deposit</span>
+                    <div class="btn-spinner"></div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ══════════ WITHDRAW ══════════ -->
+        <div class="section" id="withdrawSection">
+
+            <!-- STEP 1: Choose withdrawal method -->
+            <div id="withMethodGrid">
+                <div class="crypto-label">Select Withdrawal Method</div>
+                <div class="method-grid">
+                    <div class="method-tile" id="withMethodCrypto" onclick="selectWithMethod('crypto')">
+                        <img src="crypto.png" alt="Crypto">
+                        <div class="method-title">Crypto Transfer</div>
+                        <div class="method-desc">Withdraw instantly via BTC, USDT, etc.</div>
+                    </div>
+                    <div class="method-tile" id="withMethodBank" onclick="selectWithMethod('bank')">
+                        <img src="bank.png" alt="Bank">
+                        <div class="method-title">Bank Withdrawal</div>
+                        <div class="method-desc">Receive funds directly to your bank account.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2a: Select Currency -->
+            <div id="withCoinPickerArea" style="display:none;">
+                <div style="margin-bottom:14px;">
+                    <a href="javascript:void(0)" onclick="showWithStep('method')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Method
+                    </a>
+                </div>
+                <div class="crypto-label">Select Currency</div>
+                <div class="crypto-grid" id="withCryptoGrid">
+                    <div class="crypto-tile" data-coin="BTC" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(247,147,26,0.15);"><img
+                                src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC"></div>
+                        <div class="crypto-name">Bitcoin</div>
+                        <div class="crypto-sym">BTC</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="USDT" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(38,161,123,0.15);"><img
+                                src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT"></div>
+                        <div class="crypto-name">Tether</div>
+                        <div class="crypto-sym">USDT TRC20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="TRX" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(235,0,27,0.12);"><img
+                                src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX"></div>
+                        <div class="crypto-name">TRON</div>
+                        <div class="crypto-sym">TRX</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="ETH" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(98,126,234,0.15);"><img
+                                src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH"></div>
+                        <div class="crypto-name">Ethereum</div>
+                        <div class="crypto-sym">ETH ERC20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="BNB" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(240,185,11,0.15);"><img
+                                src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="BNB"></div>
+                        <div class="crypto-name">BNB</div>
+                        <div class="crypto-sym">BEP20</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="SOL" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(153,69,255,0.15);"><img
+                                src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL"></div>
+                        <div class="crypto-name">Solana</div>
+                        <div class="crypto-sym">SOL</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="LTC" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(191,191,191,0.12);"><img
+                                src="https://cryptologos.cc/logos/litecoin-ltc-logo.png" alt="LTC"></div>
+                        <div class="crypto-name">Litecoin</div>
+                        <div class="crypto-sym">LTC</div>
+                    </div>
+                    <div class="crypto-tile" data-coin="DOGE" onclick="selectCoin(this,'with')">
+                        <div class="crypto-icon" style="background:rgba(195,163,39,0.15);"><img
+                                src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" alt="DOGE"></div>
+                        <div class="crypto-name">Dogecoin</div>
+                        <div class="crypto-sym">DOGE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Enter Details -->
+            <div id="withFormArea" style="display:none;">
+                <div style="margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;">
+                    <a href="javascript:void(0)" onclick="showWithStep('coin')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Coin
+                    </a>
+                    <span id="withSelectedCoinIndicator"
+                        style="font-size:11px; color:var(--text); font-weight:700; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; display:flex; align-items:center; gap:6px;">
+                        BTC
+                    </span>
+                </div>
+
+                <div class="field" id="with-field-addr">
+                    <label>Your Wallet Address</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" />
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
+                        </span>
+                        <input type="text" class="padded" id="withAddr" placeholder="Paste your wallet address…">
+                    </div>
+                    <div class="field-error">Please enter a valid wallet address.</div>
+                </div>
+
+                <div class="field" id="with-field-amount">
+                    <label>Amount (USD)</label>
+                    <div class="amount-wrap">
+                        <span class="currency-prefix">$</span>
+                        <input type="number" id="withAmount" placeholder="0.00" min="5" max="1000"
+                            oninput="updateWithFee()">
+                        <span class="crypto-equiv" id="withEquiv"></span>
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:10px;">Enter an amount
+                        from <strong style="color:var(--text);">$5</strong> to <strong
+                            style="color:var(--text);">$1,000</strong></div>
+                    <div class="quick-pills">
+                        <span class="pill" onclick="setAmount('with',5)">$5</span>
+                        <span class="pill" onclick="setAmount('with',50)">$50</span>
+                        <span class="pill" onclick="setAmount('with',100)">$100</span>
+                        <span class="pill" onclick="setAmount('with',500)">$500</span>
+                        <span class="pill" onclick="setAmount('with',1000)">$1K</span>
+                    </div>
+                    <div class="field-error" id="withAmountErr">Amount must be between $5 and $1,000.</div>
+                </div>
+
+                <div class="fee-row" id="withFeeRow" style="display:none;">
+                    <div class="fee-line"><span>Withdrawal Amount</span><span id="withFeeAmt">--</span></div>
+                    <div class="fee-line"><span>Withdrawal Fee (10%)</span><span id="withFeeNet">--</span></div>
+                    <div class="fee-line total"><span>You Will Receive</span><span id="withFeeTotal">--</span></div>
+                </div>
+
+                <button class="btn-submit" id="btnWithdraw" onclick="submitWithdraw()">
+                    <span class="btn-text">Confirm Withdrawal</span>
+                    <div class="btn-spinner"></div>
+                </button>
+            </div>
+
+            <!-- STEP 2b: Bank details form -->
+            <div id="withBankFormArea" style="display:none;">
+                <div style="margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;">
+                    <a href="javascript:void(0)" onclick="showWithStep('method')"
+                        style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            style="width:12px;height:12px;">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Change Method
+                    </a>
+                    <span
+                        style="font-size:11px; color:var(--text); font-weight:700; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; display:flex; align-items:center; gap:6px;">
+                        Bank Transfer
+                    </span>
+                </div>
+
+                <div class="field" id="with-bank-field-name">
+                    <label>Select Bank</label>
+                    <div class="custom-select-wrapper" style="position:relative; z-index: 10;">
+                        <div class="custom-select-trigger" onclick="toggleBankDropdown()"
+                            style="display:flex; align-items:center; justify-content:space-between; background:#18181e; border:1px solid var(--border); border-radius:10px; padding:12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; height:44px; box-sizing:border-box;">
+                            <span id="selectedBankText" style="display:flex; align-items:center; gap:8px;">
+                                <span style="color:var(--muted);">-- Select Bank --</span>
+                            </span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                style="width:14px;height:14px;color:var(--muted); transition:transform 0.2s;"
+                                id="bankDropdownArrow">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="custom-select-options" id="bankDropdownOptions"
+                            style="display:none; position:absolute; top:105%; left:0; right:0; background:#18181e; border:1px solid var(--border); border-radius:10px; max-height:200px; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:999;">
+                            <div class="custom-select-option" onclick="selectBankOption('OPay', 'opay.png', false)"
+                                style="display:flex; align-items:center; gap:8px; padding:12px; cursor:pointer; font-size:12px; border-bottom:1px solid var(--border);">
+                                <img src="opay.png" alt="OPay"
+                                    style="width:18px;height:18px;object-fit:contain;border-radius:4px;">
+                                <span>OPay</span>
+                            </div>
+                            <div class="custom-select-option"
+                                onclick="selectBankOption('PalmPay', 'palmpay.png', false)"
+                                style="display:flex; align-items:center; gap:8px; padding:12px; cursor:pointer; font-size:12px; border-bottom:1px solid var(--border);">
+                                <img src="palmpay.png" alt="PalmPay"
+                                    style="width:18px;height:18px;object-fit:contain;border-radius:4px;">
+                                <span>PalmPay</span>
+                            </div>
+                            <div class="custom-select-option" onclick="selectBankOption('Moniepoint', 'M', true)"
+                                style="display:flex; align-items:center; gap:8px; padding:12px; cursor:pointer; font-size:12px; border-bottom:1px solid var(--border);">
+                                <span
+                                    style="background:#0052cc;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:9px;width:18px;height:18px;border-radius:50%;">M</span>
+                                <span>Moniepoint</span>
+                            </div>
+                            <div class="custom-select-option" onclick="selectBankOption('Kuda', 'K', true)"
+                                style="display:flex; align-items:center; gap:8px; padding:12px; cursor:pointer; font-size:12px;">
+                                <span
+                                    style="background:#400080;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:9px;width:18px;height:18px;border-radius:50%;">K</span>
+                                <span>Kuda</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="withBankName" value="">
+                    <div class="field-error">Please select a bank.</div>
+                </div>
+
+                <div class="field" id="with-bank-field-accnum">
+                    <label>Account Number</label>
+                    <div class="field-wrap">
+                        <input type="text" class="padded" id="withBankAccNum" placeholder="Enter account number…">
+                    </div>
+                    <div class="field-error">Please enter account number.</div>
+                </div>
+
+                <div class="field" id="with-bank-field-accname">
+                    <label>Account Name</label>
+                    <div class="field-wrap">
+                        <input type="text" class="padded" id="withBankAccName" placeholder="Enter account name…">
+                    </div>
+                    <div class="field-error">Please enter account name.</div>
+                </div>
+
+                <div class="field" id="with-bank-field-amount">
+                    <label>Amount (USD)</label>
+                    <div class="amount-wrap">
+                        <span class="currency-prefix">$</span>
+                        <input type="number" id="withBankAmount" placeholder="0.00" min="5" max="1000"
+                            oninput="updateWithBankFee()">
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:10px;">Enter an amount
+                        from <strong style="color:var(--text);">$5</strong> to <strong
+                            style="color:var(--text);">$1,000</strong></div>
+                    <div class="quick-pills">
+                        <span class="pill" onclick="setAmount('withBank',5)">$5</span>
+                        <span class="pill" onclick="setAmount('withBank',50)">$50</span>
+                        <span class="pill" onclick="setAmount('withBank',100)">$100</span>
+                        <span class="pill" onclick="setAmount('withBank',500)">$500</span>
+                        <span class="pill" onclick="setAmount('withBank',1000)">$1K</span>
+                    </div>
+                    <div class="field-error" id="withBankAmountErr">Amount must be between $5 and $1,000.</div>
+                </div>
+
+                <div class="fee-row" id="withBankFeeRow" style="display:none;">
+                    <div class="fee-line"><span>Withdrawal Amount</span><span id="withBankFeeAmt">--</span></div>
+                    <div class="fee-line"><span>Withdrawal Fee (10%)</span><span id="withBankFeeNet">--</span></div>
+                    <div class="fee-line total"><span>You Will Receive</span><span id="withBankFeeTotal">--</span></div>
+                </div>
+
+                <button class="btn-submit" id="btnWithdrawBank" onclick="submitWithdrawBank()">
+                    <span class="btn-text">Confirm Withdrawal</span>
+                    <div class="btn-spinner"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT PENDING PANEL -->
+    <div id="paymentPanel" style="display:none;">
+        <div class="wrapper" style="padding-top:0;">
+            <div
+                style="background:linear-gradient(135deg,#18181e,#1a0408);border:1px solid rgba(232,0,29,0.25);border-radius:20px;padding:24px 20px;margin-bottom:20px;">
+                <div style="text-align:center;margin-bottom:20px;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red2);margin-bottom:6px;">
+                        Step 2 of 2</div>
+                    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--text);">
+                        Complete Your <span style="color:var(--red);">Payment</span></div>
+                    <div id="ppSubText" style="font-size:12px;color:var(--muted);margin-top:6px;">Send exactly <strong
+                            id="ppAmount" style="color:var(--text);">$0.00</strong> worth of <strong id="ppCoin"
+                            style="color:var(--text);">BTC</strong> to the address below</div>
+                </div>
+
+                <!-- How it works steps -->
+                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+                    <div
+                        style="display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px;">
+                        <div
+                            style="width:24px;height:24px;border-radius:50%;background:var(--red2);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            1</div>
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:var(--text);">Copy the wallet address below
+                            </div>
+                            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Tap "Copy Address" to copy
+                                the destination wallet.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px;">
+                        <div
+                            style="width:24px;height:24px;border-radius:50%;background:var(--red2);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            2</div>
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:var(--text);">Send the exact amount from
+                                your wallet</div>
+                            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Open your crypto wallet app
+                                and send the exact USD amount shown above.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px;">
+                        <div
+                            style="width:24px;height:24px;border-radius:50%;background:var(--green);color:#111;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            3</div>
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:var(--text);">Click "I've Paid" when done
+                            </div>
+                            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Your balance will be credited
+                                after admin confirms. Usually within 30 min–2 hrs.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="background:rgba(232,0,29,0.08);border:1px solid rgba(232,0,29,0.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:18px;">
+                    <div id="ppCountdownLabel"
+                        style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">
+                        Complete payment before timer expires</div>
+                    <div id="ppCountdown"
+                        style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--red2);letter-spacing:4px;">
+                        15:00</div>
+                </div>
+
+                <!-- Crypto Details -->
+                <div id="ppCryptoDetails"
+                    style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:18px;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+                        Send To This Address</div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:16px;">
+                        <img id="ppQrImage" src="" alt="QR Code" onerror="this.style.display='none'"
+                            style="width:150px;height:150px;object-fit:contain;display:none;background:white;padding:5px;border-radius:10px;flex-shrink:0;">
+                        <div id="ppAddress"
+                            style="font-size:12px;color:var(--text);word-break:break-all;line-height:1.6;font-family:monospace;text-align:center;">
+                        </div>
+                    </div>
+                    <button
+                        onclick="navigator.clipboard.writeText(document.getElementById('ppAddress').textContent);this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy Address',2000);"
+                        style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">
+                        Copy Address
+                    </button>
+                    <div
+                        style="margin-top:10px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--gold);line-height:1.5;">
+                        ⚠ Send only <strong id="ppCoin2">BTC</strong> to this address. Sending any other coin will
+                        result in permanent loss of funds.
+                    </div>
+                </div>
+
+                <!-- Bank Details -->
+                <div id="ppBankDetails"
+                    style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:18px;display:none;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">
+                        Bank Account Details</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span
+                                style="color:var(--muted)">Bank Name:</span> <strong style="color:var(--text)">JPMorgan
+                                Chase Bank</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span
+                                style="color:var(--muted)">Account Name:</span> <strong style="color:var(--text)">KO
+                                Investors Hub LLC</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span
+                                style="color:var(--muted)">Account Number:</span> <strong style="color:var(--text)"
+                                id="ppBankAcc">1209 3847 2938</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span
+                                style="color:var(--muted)">Routing Number:</span> <strong style="color:var(--text)"
+                                id="ppBankRoute">021000021</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span
+                                style="color:var(--muted)">Reference Code:</span> <strong style="color:var(--red2)"
+                                id="ppBankRef">--</strong></div>
+                    </div>
+                    <button onclick="copyBankDetails()" id="ppCopyBankBtn"
+                        style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">
+                        Copy Bank Details
+                    </button>
+                    <div
+                        style="margin-top:10px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--gold);line-height:1.5;">
+                        ⚠ Please input the Reference Code in your bank transfer description to verify your deposit.
+                    </div>
+                </div>
+
+                <button id="btnDone" onclick="donePayment()"
+                    style="width:100%;padding:15px;background:var(--green);color:#111;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;box-shadow:0 4px 24px rgba(61,220,132,0.3);margin-bottom:10px;">
+                    I've Paid — Done ✓
+                </button>
+                <button onclick="cancelPayment()"
+                    style="width:100%;padding:13px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+                    ← Cancel / Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <span id="toastMsg">Done!</span>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+            <span>Home</span>
+            <div class="dot"></div>
+        </a>
+        <a href="income.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>My Product</span>
+            <div class="dot"></div>
+        </a>
+        <a href="support.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>Invite</span>
+            <div class="dot"></div>
+        </a>
+        <a href="account.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Account</span>
+            <div class="dot"></div>
+        </a>
+    </nav>
+
+    <script>
+        const rates = { BTC: 63500, USDT: 1, TRX: 0.12, ETH: 3400, BNB: 580, SOL: 170, LTC: 82, XRP: 0.52, DOGE: 0.15 };
+
+        function showSelector() {
+            document.getElementById('selectionPanel').style.display = 'grid';
+            document.getElementById('depositSection').classList.remove('active');
+            document.getElementById('withdrawSection').classList.remove('active');
+        }
+
+        function selectFlow(tab) {
+            document.getElementById('selectionPanel').style.display = 'none';
+            switchTab(tab);
+        }
+
+        function switchTab(tab) {
+            document.getElementById('selectionPanel').style.display = 'none';
+            document.getElementById('depositSection').classList.toggle('active', tab === 'deposit');
+            document.getElementById('withdrawSection').classList.toggle('active', tab === 'withdraw');
+
+            // Update page title to reflect current mode
+            const titleEl = document.getElementById('pageTitle');
+            if (titleEl) {
+                titleEl.innerHTML = tab === 'deposit'
+                    ? 'Deposit <span>Funds</span>'
+                    : 'Withdraw <span>Profits</span>';
+            }
+
+            if (tab === 'withdraw') {
+                if (!currentWithMethod) {
+                    showWithStep('method');
+                } else if (currentWithMethod === 'crypto') {
+                    if (!withCoin) {
+                        showWithStep('coin');
+                    } else {
+                        showWithStep('form');
+                    }
+                } else if (currentWithMethod === 'bank') {
+                    showWithStep('bankForm');
+                }
+            }
+        }
+
+        let currentMethod = '';
+        let currentWithMethod = '';
+        let depCoin = '', withCoin = '';
+        const depAddrs = {};
+        document.querySelectorAll('#depCryptoGrid .crypto-tile').forEach(t => {
+            depAddrs[t.dataset.coin] = t.dataset.addr;
+        });
+
+        // Auto-select flow from URL ?tab= param (set by Recharge/Withdraw buttons in account.html)
+        (function initTabFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get('tab');
+            if (tab === 'deposit' || tab === 'withdraw') {
+                selectFlow(tab);
+            }
+        })();
+
+        function showDepStep(step) {
+            document.getElementById('methodGrid').style.display = step === 'method' ? 'block' : 'none';
+            document.getElementById('depCoinPickerArea').style.display = step === 'coin' ? 'block' : 'none';
+            document.getElementById('depAddressBox').style.display = step === 'address' ? 'block' : 'none'; // Unused now
+            document.getElementById('depAmountSection').style.display = (step === 'amount' || step === 'bank') ? 'block' : 'none';
+        }
+
+        function selectMethod(method) {
+            currentMethod = method;
+            // Clear any previous coin selection
+            document.querySelectorAll('#depCryptoGrid .crypto-tile').forEach(t => t.classList.remove('selected'));
+            depCoin = '';
+            if (method === 'crypto') {
+                showDepStep('coin');
+            } else {
+                document.getElementById('depEquiv').textContent = '';
+
+                // Configure Bank amount section view
+                const backBtn = document.getElementById('depAmountBackBtn');
+                backBtn.onclick = () => showDepStep('method');
+                backBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Change Method`;
+
+                document.getElementById('depSelectedCoinIndicator').innerHTML = `Bank Transfer`;
+
+                showDepStep('bank');
+                updateDepFee();
+            }
+        }
+
+        let selectedBank = '';
+
+        function toggleBankDropdown() {
+            const opts = document.getElementById('bankDropdownOptions');
+            const arrow = document.getElementById('bankDropdownArrow');
+            if (!opts) return;
+            const isOpen = opts.style.display === 'block';
+            opts.style.display = isOpen ? 'none' : 'block';
+            arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        function selectBankOption(name, iconVal, isTextIcon) {
+            document.getElementById('withBankName').value = name;
+            selectedBank = name;
+
+            const selectedText = document.getElementById('selectedBankText');
+            if (isTextIcon) {
+                let bgColor = '#4a2b8e';
+                if (name === 'Moniepoint') bgColor = '#0052cc';
+                if (name === 'Kuda') bgColor = '#400080';
+                selectedText.innerHTML = `<span style="background:${bgColor};color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:9px;width:18px;height:18px;border-radius:50%;">${iconVal}</span> <span style="font-weight:500;color:var(--text);">${name}</span>`;
+            } else {
+                selectedText.innerHTML = `<img src="${iconVal}" style="width:18px;height:18px;object-fit:contain;border-radius:4px;"> <span style="font-weight:500;color:var(--text);">${name}</span>`;
+            }
+
+            // Close dropdown
+            document.getElementById('bankDropdownOptions').style.display = 'none';
+            document.getElementById('bankDropdownArrow').style.transform = 'rotate(0deg)';
+            document.getElementById('with-bank-field-name').classList.remove('has-error');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-select-wrapper')) {
+                const opts = document.getElementById('bankDropdownOptions');
+                const arrow = document.getElementById('bankDropdownArrow');
+                if (opts) {
+                    opts.style.display = 'none';
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+
+        function selectWithMethod(method) {
+            currentWithMethod = method;
+            document.querySelectorAll('#withCryptoGrid .crypto-tile').forEach(t => t.classList.remove('selected'));
+            withCoin = '';
+            if (method === 'crypto') {
+                showWithStep('coin');
+            } else {
+                selectedBank = '';
+                document.getElementById('withBankName').value = '';
+                const selText = document.getElementById('selectedBankText');
+                if (selText) selText.innerHTML = `<span style="color:var(--muted);">-- Select Bank --</span>`;
+                showWithStep('bankForm');
+                updateWithBankFee();
+            }
+        }
+
+        function showWithStep(step) {
+            document.getElementById('withMethodGrid').style.display = step === 'method' ? 'block' : 'none';
+            document.getElementById('withCoinPickerArea').style.display = step === 'coin' ? 'block' : 'none';
+            document.getElementById('withFormArea').style.display = step === 'form' ? 'block' : 'none';
+            document.getElementById('withBankFormArea').style.display = step === 'bankForm' ? 'block' : 'none';
+        }
+
+        function selectCoin(el, mode) {
+            const grid = mode === 'dep' ? '#depCryptoGrid' : '#withCryptoGrid';
+            document.querySelectorAll(grid + ' .crypto-tile').forEach(t => t.classList.remove('selected'));
+            el.classList.add('selected');
+            const coin = el.dataset.coin;
+            const logoSrc = el.querySelector('img') ? el.querySelector('img').src : '';
+            if (mode === 'dep') {
+                depCoin = coin;
+
+                const coinData = window.walletSettings ? window.walletSettings[coin] : null;
+                const addr = (coinData && coinData.address) ? coinData.address : (depAddrs[coin] || 'Address not available');
+                const qrUrl = (coinData && coinData.qr) ? coinData.qr : '';
+
+                document.getElementById('depAddress').textContent = addr;
+                document.getElementById('depNetworkBadge').textContent = coin;
+                document.getElementById('warnCoin').textContent = coin;
+
+                const logoImg = document.getElementById('depCoinLogo');
+                if (logoImg && logoSrc) logoImg.src = logoSrc;
+
+                const qrImg = document.getElementById('depQrImage');
+                if (qrImg) {
+                    if (qrUrl) {
+                        qrImg.src = qrUrl;
+                        qrImg.style.display = 'block';
+                    } else {
+                        qrImg.style.display = 'none';
+                    }
+                }
+
+                // Configure Crypto amount section view
+                const backBtn = document.getElementById('depAmountBackBtn');
+                backBtn.onclick = () => showDepStep('coin');
+                backBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Change Coin`;
+
+                document.getElementById('depSelectedCoinIndicator').innerHTML =
+                    `<img src="${logoSrc}" style="width:14px;height:14px;object-fit:contain;margin-bottom:-1px;"> ${coin}`;
+
+                // Move to amount step
+                showDepStep('amount');
+                updateDepFee();
+            } else {
+                withCoin = coin;
+                document.getElementById('withSelectedCoinIndicator').innerHTML =
+                    `<img src="${logoSrc}" style="width:14px;height:14px;object-fit:contain;margin-bottom:-1px;"> ${coin}`;
+                showWithStep('form');
+                updateWithFee();
+            }
+        }
+
+        function copyAddress() {
+            const addr = document.getElementById('depAddress').textContent;
+            navigator.clipboard.writeText(addr).catch(() => { });
+            const btn = document.getElementById('depCopyBtn');
+            btn.classList.add('copied');
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Address`;
+            }, 2000);
+        }
+
+        function copyBankDetails() {
+            const bankName = "JPMorgan Chase Bank";
+            const accName = "KO Investors Hub LLC";
+            const accNum = document.getElementById('ppBankAcc').textContent;
+            const routeNum = document.getElementById('ppBankRoute').textContent;
+            const refCode = document.getElementById('ppBankRef').textContent;
+
+            const textToCopy = `Bank Name: ${bankName}\nAccount Name: ${accName}\nAccount Number: ${accNum}\nRouting Number: ${routeNum}\nReference Code: ${refCode}`;
+
+            navigator.clipboard.writeText(textToCopy).catch(() => { });
+            const btn = document.getElementById('ppCopyBankBtn');
+            btn.textContent = 'Copied ✓';
+            setTimeout(() => {
+                btn.textContent = 'Copy Bank Details';
+            }, 2000);
+        }
+
+        function setAmount(mode, val) {
+            let inputId = 'withAmount';
+            if (mode === 'dep') inputId = 'depAmount';
+            else if (mode === 'withBank') inputId = 'withBankAmount';
+
+            document.getElementById(inputId).value = val;
+
+            let parentSelector = '#withdrawSection';
+            if (mode === 'dep') parentSelector = '#depositSection';
+            else if (mode === 'withBank') parentSelector = '#withBankFormArea';
+
+            document.querySelectorAll(parentSelector + ' .pill').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'dep') updateDepFee();
+            else if (mode === 'withBank') updateWithBankFee();
+            else updateWithFee();
+        }
+
+        function updateDepFee() {
+            const amt = parseFloat(document.getElementById('depAmount').value);
+            const equiv = document.getElementById('depEquiv');
+            if (!amt || amt < 1) { if (equiv) equiv.textContent = ''; return; }
+
+            if (currentMethod === 'crypto') {
+                const rate = rates[depCoin] || 1;
+                if (equiv) equiv.textContent = '≈ ' + (amt / rate).toFixed(6) + ' ' + depCoin;
+            } else {
+                const rate = 1600; // 1 USD = 1600 NGN
+                if (equiv) equiv.textContent = '≈ ₦' + (amt * rate).toLocaleString('en-US');
+            }
+        }
+
+        function updateWithFee() {
+            const amt = parseFloat(document.getElementById('withAmount').value);
+            const row = document.getElementById('withFeeRow');
+            const equiv = document.getElementById('withEquiv');
+            if (!amt || amt < 1) { row.style.display = 'none'; equiv.textContent = ''; return; }
+            const fee = amt * 0.10;
+            const receive = amt - fee;
+            const rate = rates[withCoin] || 1;
+            equiv.textContent = '≈ ' + (amt / rate).toFixed(6) + ' ' + withCoin;
+            document.getElementById('withFeeAmt').textContent = '$' + amt.toFixed(2);
+            document.getElementById('withFeeNet').textContent = '$' + fee.toFixed(2);
+            document.getElementById('withFeeTotal').textContent = '$' + receive.toFixed(2);
+            row.style.display = 'flex';
+        }
+
+        function updateWithBankFee() {
+            const amt = parseFloat(document.getElementById('withBankAmount').value);
+            const row = document.getElementById('withBankFeeRow');
+            if (!amt || amt < 1) { row.style.display = 'none'; return; }
+            const fee = amt * 0.10;
+            const receive = amt - fee;
+            document.getElementById('withBankFeeAmt').textContent = '$' + amt.toFixed(2);
+            document.getElementById('withBankFeeNet').textContent = '$' + fee.toFixed(2);
+            document.getElementById('withBankFeeTotal').textContent = '$' + receive.toFixed(2);
+            row.style.display = 'flex';
+        }
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.toggle('error', isError);
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3200);
+        }
+
+        let _pendingDepAmt = 0, _pendingDepCoin = '', _countdownInterval = null;
+
+        function submitDeposit() {
+            if (!currentMethod) {
+                showToast('Please select a deposit method first.', true);
+                return;
+            }
+            const amt = parseFloat(document.getElementById('depAmount').value);
+            const field = document.getElementById('dep-field-amount');
+            field.classList.remove('has-error');
+            if (!amt || amt < 10 || amt > 1000) { field.classList.add('has-error'); return; }
+            _pendingDepAmt = amt;
+            _pendingDepCoin = currentMethod === 'crypto' ? depCoin : 'Bank Transfer';
+
+            if (currentMethod === 'bank') {
+                const rate = 1600;
+                const ngnAmount = amt * rate;
+                const user = window.currentUser || null;
+                const refCode = 'DEP-' + (user ? user.uid.substring(0, 6).toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase()) + '-' + Date.now();
+
+                const btn = document.getElementById('btnDeposit');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = 'Connecting Kora...';
+
+                if (!window.Korapay) {
+                    showToast('Korapay SDK not loaded. Please reload.', true);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    return;
+                }
+
+                try {
+                    window.Korapay.initialize({
+                        key: "pk_test_6Rw5AXC6enS1ebniCwqm5mRuEPNwdMq5oqMAshfC",
+                        reference: refCode,
+                        amount: ngnAmount,
+                        currency: "NGN",
+                        customer: {
+                            name: user ? (user.displayName || user.email.split('@')[0]) : "Guest",
+                            email: user ? user.email : "guest@example.com"
+                        },
+                        onClose: function () {
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                            showToast('Payment window closed.', true);
+                        },
+                        onSuccess: function (response) {
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                            if (window._saveApprovedBankDeposit) {
+                                window._saveApprovedBankDeposit(amt, refCode);
+                            } else {
+                                showToast('Payment successful, but helper not loaded.', true);
+                            }
+                        },
+                        onFailed: function (response) {
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                            showToast('Payment failed: ' + (response.message || 'Unknown error'), true);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Korapay initialization error:', e);
+                    showToast('Failed to start Kora checkout: ' + e.message, true);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+                return;
+            }
+
+            document.getElementById('depositSection').style.display = 'none';
+
+            if (currentMethod === 'crypto') {
+                const addr = document.getElementById('depAddress').textContent;
+                document.getElementById('ppCoin').textContent = depCoin;
+                document.getElementById('ppCoin2').textContent = depCoin;
+                document.getElementById('ppAddress').textContent = addr;
+                document.getElementById('ppSubText').innerHTML = `Send exactly <strong id="ppAmount" style="color:var(--text);">$${amt.toFixed(2)}</strong> worth of <strong id="ppCoin" style="color:var(--text);">${depCoin}</strong> to the address below`;
+
+                const depQr = document.getElementById('depQrImage');
+                const ppQr = document.getElementById('ppQrImage');
+                if (depQr && ppQr) {
+                    ppQr.src = depQr.src;
+                    ppQr.style.display = depQr.style.display;
+                }
+
+                document.getElementById('ppCryptoDetails').style.display = 'block';
+                document.getElementById('ppBankDetails').style.display = 'none';
+            }
+
+            document.getElementById('paymentPanel').style.display = 'block';
+
+            let secs = 15 * 60;
+            clearInterval(_countdownInterval);
+            _countdownInterval = setInterval(() => {
+                const m = Math.floor(secs / 60);
+                const s = secs % 60;
+                document.getElementById('ppCountdown').textContent =
+                    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+                if (secs <= 0) {
+                    clearInterval(_countdownInterval);
+                    document.getElementById('ppCountdown').textContent = '00:00';
+                    document.getElementById('ppCountdownLabel').textContent = 'Time expired -- contact support if you already paid.';
+                }
+                secs--;
+            }, 1000);
+        }
+
+        function donePayment() {
+            clearInterval(_countdownInterval);
+            const btn = document.getElementById('btnDone');
+            btn.disabled = true;
+            btn.textContent = 'Submitting…';
+
+            if (window._saveDepositToFirestore) {
+                window._saveDepositToFirestore(_pendingDepAmt, _pendingDepCoin).then(() => {
+                    _resetAfterPayment(btn);
+                }).catch(() => {
+                    _resetAfterPayment(btn);
+                });
+            } else {
+                setTimeout(() => _resetAfterPayment(btn), 600);
+            }
+        }
+
+        function _resetAfterPayment(btn) {
+            document.getElementById('paymentPanel').style.display = 'none';
+            document.getElementById('depositSection').style.display = 'block';
+            showToast('Payment submitted — awaiting admin approval ✓');
+            document.getElementById('depAmount').value = '';
+            document.getElementById('depFeeRow').style.display = 'none';
+            document.getElementById('depEquiv').textContent = '';
+            document.querySelectorAll('#depositSection .pill').forEach(p => p.classList.remove('active'));
+            btn.disabled = false;
+            btn.textContent = "I've Paid — Done ✓";
+        }
+
+        function cancelPayment() {
+            clearInterval(_countdownInterval);
+            document.getElementById('paymentPanel').style.display = 'none';
+            document.getElementById('depositSection').style.display = 'block';
+        }
+
+        function submitWithdraw() {
+            if (currentWithMethod !== 'crypto') return;
+            if (!withCoin) {
+                showToast('Please select a withdrawal currency first.', true);
+                return;
+            }
+            const amt = parseFloat(document.getElementById('withAmount').value);
+            const addr = document.getElementById('withAddr').value.trim();
+            let valid = true;
+
+            document.getElementById('with-field-amount').classList.remove('has-error');
+            document.getElementById('with-field-addr').classList.remove('has-error');
+
+            if (!addr) { document.getElementById('with-field-addr').classList.add('has-error'); valid = false; }
+            if (!amt || amt < 5 || amt > 1000) { document.getElementById('with-field-amount').classList.add('has-error'); valid = false; }
+            if (!valid) return;
+
+            const btn = document.getElementById('btnWithdraw');
+            btn.classList.add('loading');
+
+            if (window._saveWithdrawalToFirestore) {
+                window._saveWithdrawalToFirestore(amt, withCoin, addr).then(() => {
+                    btn.classList.remove('loading');
+                    showToast('Withdrawal of $' + amt.toFixed(2) + ' submitted via ' + withCoin + ' ✓');
+                    document.getElementById('withAmount').value = '';
+                    document.getElementById('withAddr').value = '';
+                    document.getElementById('withFeeRow').style.display = 'none';
+                    document.getElementById('withEquiv').textContent = '';
+                    document.querySelectorAll('#withdrawSection .pill').forEach(p => p.classList.remove('active'));
+                    // Reset steps
+                    document.querySelectorAll('#withCryptoGrid .crypto-tile').forEach(t => t.classList.remove('selected'));
+                    withCoin = '';
+                    currentWithMethod = '';
+                    showWithStep('method');
+                }).catch(err => {
+                    btn.classList.remove('loading');
+                    showToast(
+                        err.message === 'Insufficient balance'
+                            ? 'Insufficient balance for this withdrawal.'
+                            : 'Withdrawal failed — please try again.',
+                        true
+                    );
+                });
+            }
+        }
+
+        function submitWithdrawBank() {
+            if (currentWithMethod !== 'bank') return;
+            const bankName = document.getElementById('withBankName').value.trim();
+            const accName = document.getElementById('withBankAccName').value.trim();
+            const accNum = document.getElementById('withBankAccNum').value.trim();
+            const amt = parseFloat(document.getElementById('withBankAmount').value);
+
+            let valid = true;
+            document.getElementById('with-bank-field-name').classList.remove('has-error');
+            document.getElementById('with-bank-field-accname').classList.remove('has-error');
+            document.getElementById('with-bank-field-accnum').classList.remove('has-error');
+            document.getElementById('with-bank-field-amount').classList.remove('has-error');
+
+            if (!bankName) { document.getElementById('with-bank-field-name').classList.add('has-error'); valid = false; }
+            if (!accName) { document.getElementById('with-bank-field-accname').classList.add('has-error'); valid = false; }
+            if (!accNum) { document.getElementById('with-bank-field-accnum').classList.add('has-error'); valid = false; }
+            if (!amt || amt < 5 || amt > 1000) { document.getElementById('with-bank-field-amount').classList.add('has-error'); valid = false; }
+
+            if (!valid) return;
+
+            const btn = document.getElementById('btnWithdrawBank');
+            btn.classList.add('loading');
+
+            const formattedDetails = `Bank: ${bankName} | Holder: ${accName} | Acc: ${accNum}`;
+
+            if (window._saveWithdrawalToFirestore) {
+                window._saveWithdrawalToFirestore(amt, 'Bank Transfer', formattedDetails).then(() => {
+                    btn.classList.remove('loading');
+                    showToast('Withdrawal of $' + amt.toFixed(2) + ' via Bank Transfer submitted ✓');
+
+                    // Reset fields
+                    document.getElementById('withBankName').value = '';
+                    const selText = document.getElementById('selectedBankText');
+                    if (selText) selText.innerHTML = `<span style="color:var(--muted);">-- Select Bank --</span>`;
+                    document.getElementById('withBankAccName').value = '';
+                    document.getElementById('withBankAccNum').value = '';
+                    document.getElementById('withBankAmount').value = '';
+                    document.getElementById('withBankFeeRow').style.display = 'none';
+                    selectedBank = '';
+
+                    document.querySelectorAll('#withdrawSection .pill').forEach(p => p.classList.remove('active'));
+
+                    currentWithMethod = '';
+                    showWithStep('method');
+                }).catch(err => {
+                    btn.classList.remove('loading');
+                    showToast(
+                        err.message === 'Insufficient balance'
+                            ? 'Insufficient balance for this withdrawal.'
+                            : 'Withdrawal failed — please try again.',
+                        true
+                    );
+                });
+            } else {
+                btn.classList.remove('loading');
+                showToast('Database connection not available.', true);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const tabParam = params.get('tab');
+            if (tabParam === 'withdraw') switchTab('withdraw');
+            else if (tabParam === 'deposit') switchTab('deposit');
+            else showSelector();
+        });
+    </script>
+
+    <!-- Firebase Auth Guard + Firestore -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRVfUeW7fOzLuJMz1GdkYgksAxgrH50g8",
+            authDomain: "coke-fd30d.firebaseapp.com",
+            projectId: "coke-fd30d",
+            storageBucket: "coke-fd30d.firebasestorage.app",
+            messagingSenderId: "1026348733661",
+            appId: "1:1026348733661:web:d06910c6c774aa9303f734"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async user => {
+            if (!user) { window.location.href = 'signin.html'; return; }
+            currentUser = user;
+            window.currentUser = user;
+
+            try {
+                try {
+                    const wSnap = await getDoc(doc(db, 'settings', 'wallets'));
+                    if (wSnap.exists()) {
+                        window.walletSettings = wSnap.data();
+                        const activeDep = document.querySelector('#depCryptoGrid .crypto-tile.selected');
+                        if (activeDep) selectCoin(activeDep, 'dep');
+                    }
+                } catch (e) { }
+
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    const balance = d.balance || 0;
+                    document.getElementById('balAmount').textContent =
+                        '$' + balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                }
+            } catch (e) {
+                document.getElementById('balAmount').textContent = '$0.00';
+            }
+
+            window.koSignOut = () => signOut(auth).then(() => window.location.href = 'signin.html');
+
+            const loader = document.getElementById('appLoader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 400);
+            }
+        });
+
+        // ── saves to both deposits AND transactions ──
+        window._saveDepositToFirestore = async function (amount, coin) {
+            if (!currentUser) return;
+            const amt = parseFloat(amount);
+            try {
+                await addDoc(collection(db, 'deposits'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amt,
+                    coin: coin,
+                    network: coin,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+                // Also write to transactions so income.html picks it up
+                await addDoc(collection(db, 'transactions'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    type: 'deposit',
+                    amount: amt,
+                    coin: coin,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error('Deposit save failed:', e);
+                throw e;
+            }
+        };
+
+        window._saveApprovedBankDeposit = async function (amount, refCode) {
+            if (!currentUser) return;
+            const amt = parseFloat(amount);
+            try {
+                // 1. Save to deposits with status 'approved'
+                const depRef = await addDoc(collection(db, 'deposits'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amt,
+                    coin: 'Bank Transfer',
+                    network: 'Bank Transfer',
+                    status: 'approved',
+                    reference: refCode,
+                    paymentGateway: 'Korapay',
+                    createdAt: serverTimestamp()
+                });
+
+                // 2. Write to transactions history with status 'approved'
+                await addDoc(collection(db, 'transactions'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    type: 'deposit',
+                    amount: amt,
+                    coin: 'Bank Transfer',
+                    status: 'approved',
+                    depositId: depRef.id,
+                    reference: refCode,
+                    paymentGateway: 'Korapay',
+                    createdAt: serverTimestamp()
+                });
+
+                // 3. Add to user's balance
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    balance: increment(amt)
+                });
+
+                // 4. Update the balance display immediately if it exists
+                const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userSnap.exists()) {
+                    const balance = userSnap.data().balance || 0;
+                    const balEl = document.getElementById('balAmount');
+                    if (balEl) {
+                        balEl.textContent = '$' + balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    }
+                }
+
+                // 5. Clear amount inputs & show success UI
+                document.getElementById('depAmount').value = '';
+                document.getElementById('depFeeRow').style.display = 'none';
+                document.getElementById('depEquiv').textContent = '';
+                document.querySelectorAll('#depositSection .pill').forEach(p => p.classList.remove('active'));
+
+                showToast('Deposit of $' + amt.toFixed(2) + ' was credited successfully! ✓');
+            } catch (e) {
+                console.error('Approved Deposit save failed:', e);
+                showToast('Error crediting account: ' + e.message, true);
+            }
+        };
+
+        // ── FIX: deducts balance immediately on withdrawal submission ──
+        window._saveWithdrawalToFirestore = async function (amount, coin, address) {
+            if (!currentUser) return;
+            const amt = parseFloat(amount);
+            try {
+                // 1. Fetch current balance and check sufficiency
+                const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+                if (!userSnap.exists()) throw new Error('User not found');
+                const currentBalance = userSnap.data().balance || 0;
+                if (currentBalance < amt) throw new Error('Insufficient balance');
+
+                // 2. Deduct balance atomically
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    balance: increment(-amt)
+                });
+
+                // 3. Update balance display immediately
+                const newBal = currentBalance - amt;
+                document.getElementById('balAmount').textContent =
+                    '$' + newBal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                // 4. Save withdrawal record
+                await addDoc(collection(db, 'withdrawals'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amt,
+                    coin: coin,
+                    address: address,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                // 5. Save to transactions so income.html picks it up
+                await addDoc(collection(db, 'transactions'), {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    type: 'withdrawal',
+                    amount: amt,
+                    coin: coin,
+                    address: address,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error('Withdrawal save failed:', e);
+                throw e;
+            }
+        };
+    </script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
